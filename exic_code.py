@@ -6,6 +6,29 @@ from telepot.namedtuple import InlineKeyboardMarkup, KeyboardButton
 from telepot.loop import MessageLoop
 from time import sleep
 import datetime
+import paho.mqtt.client as mqtt
+
+
+# Our "on message" event
+
+def on_message(client, userdata, message):
+    topic = str(message.topic)
+    message = str(message.payload.decode("utf-8"))
+    print(topic + message)
+
+def client_send_datatopic_tobroker(data, topic,broker):
+    print("creating new instance")
+    client = mqtt.Client("client_citofono") #create new instance
+    #client.on_message = on_message
+    print("connecting to broker")
+    client.connect(broker_address_mansarda,1883) #connect to broker
+
+    print("Subscribing to topic",topic_citofono)
+    client.subscribe(topic_citofono)
+    print("Publishing message to topic",topic_citofono)
+    client.publish(topic_citofono ,data_citofono)#publish
+
+
 
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
@@ -52,10 +75,15 @@ def on_callback_query(msg):
         print("open2")
         bot.sendMessage(chat_id, "apertura cancelletto...")
 
-        
+
+
+data_citofono = "init"
+broker_address_mansarda="192.168.1.90"
+topic_citofono = "house/data_citofono"
 
 sensor = Adafruit_DHT.DHT11
 pin = 4
+
 
 bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
 humidity = 0.0
@@ -69,5 +97,6 @@ while True:
     now = datetime.datetime.now()
     print(now.strftime("%Y-%m-%d %H:%M:%S"))
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-            
+    #client_send_datatopic_tobroker(data_citofono,topic_citofono,broker_address_mansarda)        
     
+
