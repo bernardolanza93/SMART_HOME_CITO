@@ -154,6 +154,7 @@ def on_callback_query(msg):
     print('Callback Query:', query_id, chat_id, query_data)
     file_path = '/home/pi/plot_data_citofono.png'
     file_path1 = '/home/pi/plot_rec.png'
+    info = bot.getChat(chat_id)
     if query_data=='info':
         now = datetime.now()
         hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -173,6 +174,9 @@ def on_callback_query(msg):
         sleep(1)
         GPIO.output(3, GPIO.HIGH)
         bot.sendMessage(chat_id, "apertura cancello...")
+        loggingR.error("APERTURA CANCELLO____time: %s", datetime.now.strftime("%d/%m/%Y %H:%M:%S"))
+        loggingR.error("UTENTE: %s", info)
+
         bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
 
 
@@ -207,7 +211,8 @@ try:
     fh = logging.FileHandler('./data/RPI_SH.log')
     fh.setLevel(logging.DEBUG)
     loggingR.addHandler(fh)
-    loggingR.error("STARDED LOGGING FILE____time: %s", datetime.now())
+
+    loggingR.error("STARDED LOGGING FILE____time: %s", datetime.now.strftime("%d/%m/%Y %H:%M:%S"))
 except Exception as e:
     print("ERROR LOGGING: ", e)
 
