@@ -162,7 +162,7 @@ def on_callback_query(msg):
         bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
         bot.sendMessage(chat_id, str(hourstr))
         bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
-        loggingR.error("INFO RICHIESTE____time: %s", datetime.now.strftime("%d/%m/%Y %H:%M:%S"))
+        loggingR.error("INFO RICHIESTE____time: %s", str(datetime.now.strftime("%d/%m/%Y %H:%M:%S")))
         loggingR.error("UTENTE: %s", info)
 
     elif query_data=='open1':
@@ -175,7 +175,7 @@ def on_callback_query(msg):
         sleep(1)
         GPIO.output(3, GPIO.HIGH)
         bot.sendMessage(chat_id, "apertura cancello...")
-        loggingR.error("APERTURA CANCELLO____time: %s", datetime.now.strftime("%d/%m/%Y %H:%M:%S"))
+        loggingR.error("APERTURA CANCELLO____time: %s", str(datetime.now.strftime("%d/%m/%Y %H:%M:%S")))
         loggingR.error("UTENTE: %s", info)
 
 
