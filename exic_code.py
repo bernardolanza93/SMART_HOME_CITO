@@ -204,7 +204,7 @@ check_folder("/data/")
 try:
     loggingR = logging.getLogger('RPI')
     loggingR.setLevel(logging.INFO)
-    fh = logging.FileHandler('/data/RPI.log')
+    fh = logging.FileHandler('./data/RPI.log')
     fh.setLevel(logging.DEBUG)
     loggingR.addHandler(fh)
     loggingR.error("STARDED LOGGING FILE____time: ", datetime.now())
