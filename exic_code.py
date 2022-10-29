@@ -14,6 +14,7 @@ import matplotlib.dates as mdates
 import multiprocessing
 import os
 import cv2
+import logging
 
 import reciver
 
@@ -21,11 +22,47 @@ import csv
 import pandas as pd
 
 
+try:
+    loggingR = logging.getLogger('RPI')
+    loggingR.setLevel(logging.INFO)
+    fh = logging.FileHandler('./data/RPI_exit_code.log')
+    fh.setLevel(logging.DEBUG)
+    loggingR.addHandler(fh)
+except Exception as e:
+    print("ERROR LOGGING: ", e)
+
 string_from_tcp_ID = "null"
 
 
 
 # Our "on message" event
+
+
+def check_folder(relative_path):
+    """
+    check_folder : check  the existence and if not, create the path for the results folder
+
+    :param relative_path:path to be checked
+
+
+    :return nothing:
+    """
+
+    workingDir = os.getcwd()
+    path = workingDir + relative_path
+
+    # Check whether the specified path exists or not
+    isExist = os.path.exists(path)
+
+    if not isExist:
+        # Create a new directory because it does not exist
+        os.makedirs(path)
+
+        print("The new directory is created!", path)
+    else:
+        print('directory ok:', path)
+
+
 def make_graph():
 
     headers = ['data','temp','hum']
@@ -165,6 +202,18 @@ def bot_ini(bot):
         now = datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M:%S"))
     
+
+
+
+
+try:
+    loggingR = logging.getLogger('RPI')
+    loggingR.setLevel(logging.INFO)
+    fh = logging.FileHandler('./data/RPI.log')
+    fh.setLevel(logging.DEBUG)
+    loggingR.addHandler(fh)
+except Exception as e:
+    print("ERROR LOGGING: ", e)
 
 
 sensor = Adafruit_DHT.DHT11
