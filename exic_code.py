@@ -207,7 +207,7 @@ try:
     fh = logging.FileHandler('./data/RPI.log')
     fh.setLevel(logging.DEBUG)
     loggingR.addHandler(fh)
-    loggingR.error("STARDED LOGGING FILE____time: ", datetime.now())
+    loggingR.error("STARDED LOGGING FILE____time: %s", datetime.now())
 except Exception as e:
     print("ERROR LOGGING: ", e)
 
