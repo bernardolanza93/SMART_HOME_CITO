@@ -41,11 +41,12 @@ def make_graph():
     fig, ax1 = plt.subplots()
 
     color = 'tab:red'
-    ax1.set_xlabel('time')
+    ax1.set_xlabel('time',rotation=45)
     ax1.set_ylabel('Temp', color=color)
     ax1.plot(x, y, color=color)
     ax1.tick_params(axis='y', labelcolor=color)
-
+    ax1.grid(True)
+    ax1.tick_params(axis='x', labelrotation=45)
     ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
     color = 'tab:blue'
@@ -53,10 +54,11 @@ def make_graph():
     ax2.plot(x,z, color=color)
     ax2.tick_params(axis='y', labelcolor=color)
 
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
-
+    fig.tight_layout()
+    # otherwise the right y-label is slightly clipped
+    
     plt.savefig('plot_data_citofono.png')
-
+    plt.close("all")
     #The simplest way is to start the ntetwork loop on a separate thread using the client.loop_start() function, then use the normal client.publish method
 
 
@@ -77,6 +79,7 @@ def write_data_csv():
         writer = csv.writer(f)
         print("read complete : ",current_time,temp,hum)
         writer.writerow([current_time,temp,hum])
+        f.close()
         make_graph()
         time.sleep(60)
         
@@ -139,6 +142,8 @@ def on_callback_query(msg):
         sleep(1)
         GPIO.output(3, GPIO.HIGH)
         bot.sendMessage(chat_id, "apertura cancello...")
+        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
+
 
         
         
