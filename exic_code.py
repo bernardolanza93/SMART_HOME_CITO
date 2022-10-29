@@ -22,15 +22,6 @@ import csv
 import pandas as pd
 
 
-try:
-    loggingR = logging.getLogger('RPI')
-    loggingR.setLevel(logging.INFO)
-    fh = logging.FileHandler('./data/RPI_exit_code.log')
-    fh.setLevel(logging.DEBUG)
-    loggingR.addHandler(fh)
-except Exception as e:
-    print("ERROR LOGGING: ", e)
-
 string_from_tcp_ID = "null"
 
 
@@ -61,6 +52,19 @@ def check_folder(relative_path):
         print("The new directory is created!", path)
     else:
         print('directory ok:', path)
+
+
+check_folder("./data/")
+try:
+    loggingR = logging.getLogger('RPI')
+    loggingR.setLevel(logging.INFO)
+    fh = logging.FileHandler('./data/RPI_exit_code.log')
+    fh.setLevel(logging.DEBUG)
+    loggingR.addHandler(fh)
+    loggingR.error("STARDED LOGGING FILE____time: ", datetime.now())
+except Exception as e:
+    print("ERROR LOGGING: ", e)
+
 
 
 def make_graph():
