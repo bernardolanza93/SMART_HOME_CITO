@@ -23,6 +23,8 @@ import pandas as pd
 
 
 string_from_tcp_ID = "null"
+path_here = os.getcwd()
+path = path_here + "/data/"
 
 
 
@@ -171,6 +173,7 @@ def on_callback_query(msg):
         bot.sendPhoto(chat_id, open(file_path, 'rb'))
         bot.sendMessage(chat_id, 'temp mansarda: ')
         bot.sendPhoto(chat_id, open(file_path1, 'rb'))
+        bot.sendDocument(id, open(path + "RPI_exit_code.log", 'rb'))
         print("bot COM succesful")
 
     elif query_data=='open1':
