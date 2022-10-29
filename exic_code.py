@@ -60,7 +60,7 @@ check_folder("./data/")
 try:
     loggingR = logging.getLogger('RPI')
     loggingR.setLevel(logging.INFO)
-    fh = logging.FileHandler('./data/RPI_exit_code.log')
+    fh = logging.FileHandler('/data/RPI_exit_code.log')
     fh.setLevel(logging.DEBUG)
     loggingR.addHandler(fh)
     loggingR.error("STARDED LOGGING FILE____time: ", datetime.now())
@@ -169,11 +169,7 @@ def on_callback_query(msg):
         cpu = CPUTemperature()
         bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
         bot.sendMessage(chat_id, str(hourstr))
-        bot.sendMessage(chat_id, 'temp citofono: ')
-        bot.sendPhoto(chat_id, open(file_path, 'rb'))
-        bot.sendMessage(chat_id, 'temp mansarda: ')
-        bot.sendPhoto(chat_id, open(file_path1, 'rb'))
-        bot.sendDocument(id, open(path + "RPI_exit_code.log", 'rb'))
+        bot.sendDocument(id, open(path + "RPI_exit_code", 'rb'))
         print("bot COM succesful")
 
     elif query_data=='open1':
