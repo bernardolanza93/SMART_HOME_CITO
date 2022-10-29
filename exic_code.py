@@ -56,7 +56,7 @@ def check_folder(relative_path):
         print('directory ok:', path)
 
 
-check_folder("./data/")
+check_folder("/data/")
 try:
     loggingR = logging.getLogger('RPI')
     loggingR.setLevel(logging.INFO)
