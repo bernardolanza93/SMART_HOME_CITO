@@ -252,7 +252,7 @@ humidity = 0.0
 temperature = 0.0
 bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
 
-loggingR.error("INI____ALL(4) PROCs: %s", str(hourstr))
+loggingR.error("INI____ALL(4 yeah) PROCs: %s", str(hourstr))
 
 p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_from_tcp_ID,))
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
