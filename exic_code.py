@@ -245,11 +245,7 @@ humidity = 0.0
 temperature = 0.0
 bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
 
-
-
-
-
-print("inizializing process 1")
+loggingR.error("INITIALIZING PROCs: %s", datetime.now.strftime("%d/%m/%Y %H:%M:%S"))
 
 p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_from_tcp_ID,))
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
