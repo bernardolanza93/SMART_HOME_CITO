@@ -146,6 +146,7 @@ def on_chat_message(msg):
                             )
 
     bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
+
  
     print("bot COM succesful")
 
@@ -155,6 +156,9 @@ def on_callback_query(msg):
     file_path = '/home/pi/plot_data_citofono.png'
     file_path1 = '/home/pi/plot_rec.png'
     info = bot.getChat(chat_id)
+    text1 = msg['text']
+    loggingR.error("COM INI WITH :%s", str(text1))
+
     if query_data=='info':
         now = datetime.now()
         hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
