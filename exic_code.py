@@ -166,6 +166,7 @@ def on_callback_query(msg):
         bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
         bot.sendMessage(chat_id, str(hourstr))
         bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
+        loggingR.error("(info)______________________EVENT____________________")
 
         loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
 
@@ -184,6 +185,8 @@ def on_callback_query(msg):
         bot.sendMessage(chat_id, "apertura cancello...")
         now = datetime.now()
         hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+        loggingR.error("(open1)______________________EVENT____________________")
+
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
         loggingR.error("COM INI WITH :%s", str(text1))
@@ -200,6 +203,12 @@ def on_callback_query(msg):
         print("open2")
         bot.sendMessage(chat_id, "reboot in corso...")
         os.system('sudo reboot')
+        now = datetime.now()
+        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+        loggingR.error("(open2)______________________EVENT____________________")
+        loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
+        loggingR.error("UTENTE: %s", str(info))
+        loggingR.error("COM INI WITH :%s", str(text1))
         
 
 
