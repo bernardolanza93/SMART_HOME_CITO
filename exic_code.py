@@ -171,16 +171,7 @@ def on_callback_query(msg):
         loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
 
         loggingR.error("UTENTE: %s", str(info))
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="INFO_CASA", callback_data='info'),
-             InlineKeyboardButton(text="CANCELLO", callback_data='open1'),
-             InlineKeyboardButton(text="REBOOT", callback_data='open2')
-             ]
 
-        ]
-        )
-
-        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
 
     elif query_data=='open1':
         print("open1")
@@ -198,16 +189,7 @@ def on_callback_query(msg):
 
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="INFO_CASA", callback_data='info'),
-             InlineKeyboardButton(text="CANCELLO", callback_data='open1'),
-             InlineKeyboardButton(text="REBOOT", callback_data='open2')
-             ]
 
-        ]
-        )
-
-        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
 
 
 
@@ -226,16 +208,7 @@ def on_callback_query(msg):
         loggingR.error("(open2)______________________EVENT____________________")
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="INFO_CASA", callback_data='info'),
-             InlineKeyboardButton(text="CANCELLO", callback_data='open1'),
-             InlineKeyboardButton(text="REBOOT", callback_data='open2')
-             ]
 
-        ]
-        )
-
-        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
 
 
 
