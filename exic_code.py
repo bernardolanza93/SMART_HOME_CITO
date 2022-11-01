@@ -240,6 +240,8 @@ def on_callback_query(msg):
 
 
 def bot_ini(bot):
+
+
     
     MessageLoop(bot, {'chat': on_chat_message,
       'callback_query': on_callback_query}).run_as_thread()
@@ -251,7 +253,8 @@ def bot_ini(bot):
     
 
 
-
+now = datetime.now()
+hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
 
 check_folder("/data/")
 try:
@@ -282,6 +285,8 @@ p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
 p3_ri = multiprocessing.Process(target=reciver.main)
 p_sensor = multiprocessing.Process(target=write_data_csv)
+
+
 try:
     p1.start()
 except Exception as e:
