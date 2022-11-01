@@ -237,7 +237,7 @@ try:
     fh.setLevel(logging.DEBUG)
     loggingR.addHandler(fh)
 
-    loggingR.error("STARDED LOGGING FILE____time: %s", datetime.now.strftime("%d/%m/%Y %H:%M:%S"))
+    loggingR.error("STARDED LOGGING FILE____time: %s", str(hourstr))
 except Exception as e:
     print("ERROR LOGGING: ", e)
 
