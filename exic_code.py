@@ -156,7 +156,6 @@ def on_callback_query(msg):
     file_path = '/home/pi/plot_data_citofono.png'
     file_path1 = '/home/pi/plot_rec.png'
     info = bot.getChat(chat_id)
-    text1 = msg['text']
 
 
     if query_data=='info':
@@ -171,7 +170,6 @@ def on_callback_query(msg):
         loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
 
         loggingR.error("UTENTE: %s", str(info))
-        loggingR.error("COM INI WITH :%s", str(text1))
 
     elif query_data=='open1':
         print("open1")
@@ -189,7 +187,6 @@ def on_callback_query(msg):
 
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
-        loggingR.error("COM INI WITH :%s", str(text1))
 
 
         bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
@@ -208,8 +205,7 @@ def on_callback_query(msg):
         loggingR.error("(open2)______________________EVENT____________________")
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
-        loggingR.error("COM INI WITH :%s", str(text1))
-        
+
 
 
 def bot_ini(bot):
