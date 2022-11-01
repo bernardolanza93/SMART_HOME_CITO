@@ -259,10 +259,25 @@ p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
 p3_ri = multiprocessing.Process(target=reciver.main)
 p_sensor = multiprocessing.Process(target=write_data_csv)
-p1.start()
-p2.start()
-p3_ri.start()
-p_sensor.start()
+try:
+    p1.start()
+except Exception as e:
+    loggingR.error("PROCESS error 1:  %s ", e)
+try:
+    p2.start()
+except Exception as e:
+    loggingR.error("PROCESS error 2:  %s ", e)
+try:
+
+    p3_ri.start()
+except Exception as e:
+    loggingR.error("PROCESS error 3:  %s ", e)
+
+try:
+
+    p_sensor.start()
+except Exception as e:
+    loggingR.error("PROCESS error 4:  %s ", e)
 
 
 print("ID of process p1: {}".format(p1.pid))
