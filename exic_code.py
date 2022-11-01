@@ -157,7 +157,7 @@ def on_callback_query(msg):
     file_path1 = '/home/pi/plot_rec.png'
     info = bot.getChat(chat_id)
     text1 = msg['text']
-    loggingR.error("COM INI WITH :%s", str(text1))
+
 
     if query_data=='info':
         now = datetime.now()
@@ -170,6 +170,7 @@ def on_callback_query(msg):
         loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
 
         loggingR.error("UTENTE: %s", str(info))
+        loggingR.error("COM INI WITH :%s", str(text1))
 
     elif query_data=='open1':
         print("open1")
@@ -185,6 +186,7 @@ def on_callback_query(msg):
         hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
+        loggingR.error("COM INI WITH :%s", str(text1))
 
 
         bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
