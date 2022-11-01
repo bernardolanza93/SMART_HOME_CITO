@@ -284,7 +284,7 @@ except Exception as e:
 print("ID of process p1: {}".format(p1.pid))
 print("ID of process p1: {}".format(p2.pid))
 print("ID of process p1: {}".format(p3_ri.pid))
-print("ID of process p1: {}".format(p_sensor))
+print("ID of process p1: {}".format(p_sensor.pid))
 
 p1.join()
 p2.join()
