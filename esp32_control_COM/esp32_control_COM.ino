@@ -1,16 +1,23 @@
+
+#include <WiFi.h>
+
+
+#include <EmonLib.h>
+
 #include "WiFi.h" // Enables the ESP32 to connect to the local network (via WiFi)
 
 
 
-#include <DHT.h>
 #include <PubSubClient.h>
 
 
 
-#define DHTPIN 4  // for ESP32
-#define DHTTYPE DHT11 
-DHT dht(4, DHT11);
 
+
+EnergyMonitor emon1;
+//Inserire la tensione della vostra rete elettrica
+int rede = 230.0; // Italia 230V in alcuni paesi 110V 
+int pin_sct = 14;
 
 // Code for the ESP32
 
@@ -69,26 +76,30 @@ void connect_MQTT(){
 
 void setup() {
   Serial.begin(9600);
+  emon1.current(pin_sct, 29);
   
   
 }
 
 void loop() {
   connect_MQTT();
-  dht.begin();
-  
-  Serial.setTimeout(2000);
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
-  Serial.print("Humidity: ");
-  Serial.print(h);
-  Serial.println(" %");
-  Serial.print("Temperature: ");
-  Serial.print(t);
-  Serial.println(" *C");
 
-  String hs="Hum: "+String((float)h)+" % ";
-  String ts="Temp: "+String((float)t)+" C ";
+  Serial.setTimeout(2000);
+  
+  double t = emon1.calcIrms(1480);
+  //Mostra il valore della Corrente
+  
+  Serial.print("Corrente : ");
+  Serial.print(t); // Irmsù
+
+  double h = t*rede;
+  Serial.print(" Potenza : ");
+  Serial.print(h);
+  
+
+
+  String hs="Amp: "+String((float)t)+" A ";
+  String ts="Watt: "+String((float)h)+" W ";
   
   
   
@@ -99,21 +110,21 @@ void loop() {
 
   // PUBLISH to the MQTT Broker (topic = Humidity, defined at the beginning)
   if (client.publish(temperature_topic, String(t).c_str())) {
-    Serial.println("Temperature sent!");
+    Serial.println("Current sent!");
   }
   // Again, client.publish will return a boolean value depending on whether it succeded or not.
   // If the message failed to send, we will try again, as the connection may have broken.
   else {
-    Serial.println("Temperature failed to send. Reconnecting to MQTT Broker and trying again");
+    Serial.println("Current failed to send. Reconnecting to MQTT Broker and trying again");
     client.connect(clientID, mqtt_username, mqtt_password);
     delay(10); // This delay ensures that client.publish doesn't clash with the client.connect call
     client.publish(temperature_topic, String(t).c_str());
   }
   if (client.publish(humidity_topic, String(h).c_str())) {
-  Serial.println("Humidity sent!");
+  Serial.println("Pot sent!");
   }
   else {
-    Serial.println("Humidity failed to send. Reconnecting to MQTT Broker and trying again");
+    Serial.println("Pot failed to send. Reconnecting to MQTT Broker and trying again");
     client.connect(clientID, mqtt_username, mqtt_password);
     delay(10); // This delay ensures that client.publish doesn't clash with the client.connect call
     client.publish(humidity_topic, String(h).c_str());
