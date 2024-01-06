@@ -11,6 +11,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import socket
+import psutil
+
 
 import multiprocessing
 import os
@@ -206,10 +208,25 @@ def on_callback_query(msg):
         bot.sendMessage(chat_id, hostname)
         bot.sendMessage(chat_id, "ip_address")
         bot.sendMessage(chat_id, ip_address)
-
-
-
-
+        boot_time_timestamp = psutil.boot_time()
+        boot_time = datetime.fromtimestamp(boot_time_timestamp)
+        cpu_usage = psutil.cpu_percent(interval=1)  # Retrieves CPU usage in the last 1 second
+        memory = psutil.virtual_memory()
+        disk = psutil.disk_usage('/')
+        bot.sendMessage(chat_id,"Total Disk Space: GB ")
+        bot.sendMessage(chat_id,round(disk.total / (1024 ** 3)),3)
+        bot.sendMessage(chat_id,"Used Disk Space: ")
+        bot.sendMessage(chat_id,disk.used / (1024 ** 3))
+        bot.sendMessage(chat_id,"Free Disk Space: ")
+        bot.sendMessage(chat_id,round(disk.free / (1024 ** 3),2))
+        bot.sendMessage(chat_id,"Total Memory: ")
+        bot.sendMessage(chat_id,round(memory.total / (1024 ** 3),2))
+        bot.sendMessage(chat_id,"Available Memory: ")
+        bot.sendMessage(chat_id,round(memory.available / (1024 ** 3),2))
+        bot.sendMessage(chat_id,"CPU Usage: ")
+        bot.sendMessage(chat_id,cpu_usage)
+        bot.sendMessage(chat_id,"Last reboot time: ")
+        bot.sendMessage(chat_id,boot_time)
 
 
 def bot_ini(bot):
