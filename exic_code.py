@@ -10,6 +10,7 @@ from time import sleep
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import socket
 
 import multiprocessing
 import os
@@ -117,14 +118,6 @@ def write_data_csv():
         make_graph()
         time.sleep(60)
         
-        
-        
-
-
-
-
-
-
 
 #plt.show()
 
@@ -139,7 +132,8 @@ def on_chat_message(msg):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
                                     [InlineKeyboardButton(text="INFO_CASA",callback_data='info'),
                                      InlineKeyboardButton(text="CANCELLO",callback_data='open1'),
-                                     InlineKeyboardButton(text="REBOOT",callback_data='open2')
+                                     InlineKeyboardButton(text="REBOOT",callback_data='open2'),
+                                     InlineKeyboardButton(text="DEVICE_STATUS", callback_data='status')
                                      ]
                                     
                                 ]
@@ -148,7 +142,7 @@ def on_chat_message(msg):
     bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
 
  
-    print("bot COM succesful")
+    print("||_||_ CHECK BOT MENU")
 
 def on_callback_query(msg):
     query_id, chat_id, query_data = telepot.glance(msg, flavor='callback_query')
@@ -160,6 +154,7 @@ def on_callback_query(msg):
 
 
     if query_data=='info':
+        print("||_||_ CHECK INFO LOG")
         now = datetime.now()
         hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
         cpu = CPUTemperature()
@@ -174,7 +169,7 @@ def on_callback_query(msg):
 
 
     elif query_data=='open1':
-        print("open1")
+        print("||_||_ CHECK CANCELLO")
         
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(3, GPIO.OUT)
@@ -200,7 +195,8 @@ def on_callback_query(msg):
         
         
     elif query_data=='open2':
-        print("open2")
+
+        print("||_||_ CHECK REBOOT")
         bot.sendMessage(chat_id, "reboot in corso...")
         os.system('sudo reboot')
         now = datetime.now()
@@ -208,6 +204,25 @@ def on_callback_query(msg):
         loggingR.error("(open2)______________________EVENT____________________")
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
+
+
+    elif query_data=='status':
+        print("||_||_ CHECK STATUS")
+        bot.sendMessage(chat_id, "data from the raspi...")
+        username = os.getlogin()
+        bot.sendMessage(chat_id, "username")
+        bot.sendMessage(chat_id, username)
+
+        # Get the hostname
+        hostname = socket.gethostname()
+        # Get the IP address
+        ip_address = socket.gethostbyname(hostname)
+        bot.sendMessage(chat_id, "hostname")
+        bot.sendMessage(chat_id, hostname)
+        bot.sendMessage(chat_id, "ip_address")
+        bot.sendMessage(chat_id, ip_address)
+
+
 
 
 
@@ -218,18 +233,19 @@ def bot_ini(bot):
     
     MessageLoop(bot, {'chat': on_chat_message,
       'callback_query': on_callback_query}).run_as_thread()
-    print("listaning... bot online")
+    print("||_||_ CHECK BOT ONLINE")
     while True:
         sleep(1)
         now = datetime.now()
-        print(now.strftime("%Y-%m-%d %H:%M:%S"))
+        print(now.strftime("%H:%M:%S"))
     
 
 
 now = datetime.now()
 hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-
+print("||_||_ CHECK FOLDER")
 check_folder("/data/")
+print("||_||_ CHECK LOGGER")
 try:
     loggingR = logging.getLogger('RPI')
     loggingR.setLevel(logging.INFO)
@@ -247,13 +263,13 @@ pin = 4
 
 
 
-
+print("||_||_ CHECK BOT")
 humidity = 0.0
 temperature = 0.0
 bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
 
 loggingR.error("INI____ALL(4 yeah) PROCs: %s", str(hourstr))
-
+print("||_||_ CHECK PROCESSES")
 p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_from_tcp_ID,))
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
 p3_ri = multiprocessing.Process(target=reciver.main)
@@ -279,7 +295,7 @@ try:
     p_sensor.start()
 except Exception as e:
     loggingR.error("PROCESS error 4:  %s ", e)
-
+print("||_||_ CHECK START PROCESS")
 
 print("ID of process p1: {}".format(p1.pid))
 print("ID of process p1: {}".format(p2.pid))
