@@ -100,23 +100,8 @@ def make_graph():
 def write_data_csv():
     
     while True:
-        hum = float(0)
-        temp = float(0)
-        hum, temp = Adafruit_DHT.read_retry(sensor, pin)
-        print("read : ",hum,temp)
-        now = datetime.now()
-        current_time = now.strftime('%Y-%m-%d %H:%M:%S')
-        
-           
-        #print("data",t,C,H)
-        
-        f = open('temp_dataRPCITO.csv', 'a')
-        writer = csv.writer(f)
-        print("read complete : ",current_time,temp,hum)
-        writer.writerow([current_time,temp,hum])
-        f.close()
-        make_graph()
-        time.sleep(60)
+        print("service unused...")
+        time.sleep(600)
         
 
 #plt.show()
