@@ -229,9 +229,9 @@ def bot_ini(bot):
       'callback_query': on_callback_query}).run_as_thread()
     print("||_||_ CHECK BOT ONLINE")
     while True:
-        sleep(1)
-        now = datetime.now()
-        print(now.strftime("%H:%M:%S"))
+        sleep(2)
+
+        print(".",end='')
     
 
 
