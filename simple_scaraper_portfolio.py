@@ -98,7 +98,7 @@ def trend_e_variazione_percentuale(symbol, num_giorni):
     prices = [candle[4] for candle in ohlcv]
 
     # Calcola il trend degli ultimi N giorni
-    trend = "crescita" if prices[-1] > prices[-num_giorni] else "perdita"
+    trend = "++" if prices[-1] > prices[-num_giorni] else "--"
 
     # Calcola la variazione percentuale degli ultimi N giorni
     variazione_percentuale = ((prices[-1] - prices[-num_giorni]) / prices[-num_giorni]) * 100
@@ -141,7 +141,9 @@ def reso_totale_per_criptovaluta(crypto_portfolio, symbol, esprimi_percentuale=T
     total_invested = 0
     total_returns = 0
 
-    print(f"Dettagli degli acquisti per {symbol}:")
+    string_acquisti = []
+
+    #print(f"Dettagli degli acquisti per {symbol}:")
     for data_acquisto, nome_crypto in crypto_portfolio.keys():
         if nome_crypto == symbol:
             importo = crypto_portfolio[(data_acquisto, nome_crypto)]
@@ -150,16 +152,19 @@ def reso_totale_per_criptovaluta(crypto_portfolio, symbol, esprimi_percentuale=T
             rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto)
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
+            string_acquisti.append(f" {symbol} ASSET: {importo} USD del {data_acquisto}, RENDIMENTO: {rendimento:.2f}%")
 
-            print(f"Acquisto di {importo} USD il {data_acquisto}, Rendimento percentuale: {rendimento:.2f}%")
+            ##print(f" {symbol} ASSET: {importo} USD del {data_acquisto}, RENDIMENTO: {rendimento:.2f}%")
 
     if esprimi_percentuale:
         reso_totale_percentuale = (total_returns / total_invested) * 100
-        print(f"\nReso totale per {symbol}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}USD). Investito:  {total_invested} USD")
-        return reso_totale_percentuale
+        string_acquisti.append(f"RENDIMENTO TOTALE {symbol}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}USD). Deposito: {total_invested} USD")
+        ##print(f"RENDIMENTO TOTALE {symbol}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}USD). Deposito: {total_invested} USD")
+        return reso_totale_percentuale ,string_acquisti
     else:
-        print(f"\nReso totale per {symbol}: {total_returns:.2f} USD su un investimento totale di {total_invested} USD")
-        return total_returns
+        string_acquisti.append(f"Reso totale per {symbol}: {total_returns:.2f} USD su un investimento totale di {total_invested} USD")
+        ##print(f"Reso totale per {symbol}: {total_returns:.2f} USD su un investimento totale di {total_invested} USD")
+        return total_returns, string_acquisti
 
 def get_crypto_percentage_change(symbol, start_date, end_date=None):
     # Crea l'istanza del modulo di scambio CCXT
@@ -202,34 +207,47 @@ aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
 
 crypto_set = set()
 sconto_percentuale = 2
-
-print("Criptovalute nel portafoglio:")
+string = []
+string.append("START: Criptovalute nel portafoglio:")
+##print("Criptovalute nel portafoglio:")
 for data_acquisto, nome_crypto in crypto_portfolio.keys():
     if nome_crypto not in crypto_set:
-        print(nome_crypto)
+        print("1 ",nome_crypto)
         giorni_passati = giorni_passati_da_minimo_locale_con_sconto(nome_crypto, sconto_percentuale)
         if giorni_passati is not None:
-            print(
-                f"ultimo minimo locale di {nome_crypto} è stato {giorni_passati} giorni fa. (scontato del {sconto_percentuale}%).")
+            string.append(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
+            ##print(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
         else:
-            print(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
+            ##print(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
+            string.appedd(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
 
         num_giorni = 5
 
         trend, variazione_percentuale = trend_e_variazione_percentuale(nome_crypto, num_giorni)
 
-        print(f"{nome_crypto} è in {trend} da {num_giorni} giorni del {variazione_percentuale:.2f}%.")
-
+        ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
+        string.append(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
         num_giorni = 2
 
         trend, variazione_percentuale = trend_e_variazione_percentuale(nome_crypto, num_giorni)
 
-        print(f"{nome_crypto} è in {trend} da {num_giorni} giorni del {variazione_percentuale:.2f}%.")
+        ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
+        string.append(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
         crypto_set.add(nome_crypto)
 
-        reso_totale_per_criptovaluta(crypto_portfolio,nome_crypto)
+        a, string_acquisti = reso_totale_per_criptovaluta(crypto_portfolio,nome_crypto)
+        string.append(string_acquisti)
 
-        plot_andamento_cripto(nome_crypto, crypto_portfolio)
+        #plot_andamento_cripto(nome_crypto, crypto_portfolio)
+    for info in string:
+        if isinstance(info, str):
+            print(info)
+        elif isinstance(info, list):
+            for i in info:
+                print(i)
+        else:
+            print("It's neither a string nor a list")
+
 
 
 sys.exit()
