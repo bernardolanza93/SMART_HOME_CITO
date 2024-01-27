@@ -196,6 +196,8 @@ def on_callback_query(msg):
 
         loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
         loggingR.error("UTENTE: %s", str(info))
+        bot.sendMessage(chat_id, "ID CHAT:")
+        bot.sendMessage(chat_id, str(chat_id))
 
 
 
