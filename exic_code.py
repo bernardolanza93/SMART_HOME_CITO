@@ -225,12 +225,12 @@ def on_callback_query(msg):
         # plot_andamento_cripto(nome_crypto, crypto_portfolio)
         for info in string:
             if isinstance(info, str):
-                print(info)
+                bot.sendMessage(chat_id,info)
             elif isinstance(info, list):
                 for i in info:
-                    print(i)
+                    bot.sendMessage(chat_id,i)
             else:
-                print("It's neither a string nor a list")
+                bot.sendMessage(chat_id,"It's neither a string nor a list")
 
 
 
