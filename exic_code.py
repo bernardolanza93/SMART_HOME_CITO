@@ -142,6 +142,9 @@ def on_callback_query(msg):
 
     if query_data=='info':
         print("||_||_ CHECK INFO LOG")
+        bot.sendMessage(chat_id, "CHAT:")
+        bot.sendMessage(chat_id, str(chat_id))
+
         now = datetime.now()
         hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
         cpu = CPUTemperature()
