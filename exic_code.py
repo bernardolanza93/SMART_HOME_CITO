@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import socket
 import psutil
-
+from simple_scaraper_portfolio import *
 
 import multiprocessing
 import os
@@ -117,10 +117,10 @@ def write_data_csv():
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                                    [InlineKeyboardButton(text="INFO_CASA",callback_data='info'),
+                                    [InlineKeyboardButton(text="INFO",callback_data='info'),
                                      InlineKeyboardButton(text="CANCELLO",callback_data='open1'),
-                                     InlineKeyboardButton(text="REBOOT",callback_data='open2'),
-                                     InlineKeyboardButton(text="DEVICE_STATUS", callback_data='status')
+                                     InlineKeyboardButton(text="CRYPTO", callback_data='status'),
+                                     InlineKeyboardButton(text="REBOOT", callback_data='open2')
                                      ]
                                     
                                 ]
@@ -153,6 +153,31 @@ def on_callback_query(msg):
         loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
 
         loggingR.error("UTENTE: %s", str(info))
+
+        print("||_||_ CHECK STATUS")
+        bot.sendMessage(chat_id, "data from the raspi...")
+        username = os.getlogin()
+        bot.sendMessage(chat_id, "username")
+        bot.sendMessage(chat_id, username)
+
+        # Get the hostname
+        hostname = socket.gethostname()
+        # Get the IP address
+        ip_address = socket.gethostbyname(hostname)
+        bot.sendMessage(chat_id, "hostname")
+        bot.sendMessage(chat_id, hostname)
+        bot.sendMessage(chat_id, "ip_address")
+        bot.sendMessage(chat_id, ip_address)
+
+        # Current process ID
+        current_pid = os.getpid()
+        bot.sendMessage(chat_id,"Current Process ID: ")
+        bot.sendMessage(chat_id,current_pid)
+        # Parent process ID
+        parent_pid = os.getppid()
+        bot.sendMessage(chat_id,"Parent Process ID: ")
+        bot.sendMessage(chat_id,parent_pid)
+
 
 
     elif query_data=='open1':
@@ -194,29 +219,17 @@ def on_callback_query(msg):
 
 
     elif query_data=='status':
-        print("||_||_ CHECK STATUS")
-        bot.sendMessage(chat_id, "data from the raspi...")
-        username = os.getlogin()
-        bot.sendMessage(chat_id, "username")
-        bot.sendMessage(chat_id, username)
+        string = crypto_request()
+        # plot_andamento_cripto(nome_crypto, crypto_portfolio)
+        for info in string:
+            if isinstance(info, str):
+                print(info)
+            elif isinstance(info, list):
+                for i in info:
+                    print(i)
+            else:
+                print("It's neither a string nor a list")
 
-        # Get the hostname
-        hostname = socket.gethostname()
-        # Get the IP address
-        ip_address = socket.gethostbyname(hostname)
-        bot.sendMessage(chat_id, "hostname")
-        bot.sendMessage(chat_id, hostname)
-        bot.sendMessage(chat_id, "ip_address")
-        bot.sendMessage(chat_id, ip_address)
-
-        # Current process ID
-        current_pid = os.getpid()
-        bot.sendMessage(chat_id,"Current Process ID: ")
-        bot.sendMessage(chat_id,current_pid)
-        # Parent process ID
-        parent_pid = os.getppid()
-        bot.sendMessage(chat_id,"Parent Process ID: ")
-        bot.sendMessage(chat_id,parent_pid)
 
 
 

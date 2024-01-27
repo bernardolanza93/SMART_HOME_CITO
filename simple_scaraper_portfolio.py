@@ -193,62 +193,61 @@ def get_crypto_percentage_change(symbol, start_date, end_date=None):
 
     return percentage_change
 
+def crypto_request():
 
-crypto_portfolio = {}
-# Esempio di utilizzo
-aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 200)
-aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
-aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 150)
-aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
-aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 30)
-aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
-aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
-aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
+    crypto_portfolio = {}
+    # Esempio di utilizzo
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 200)
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 150)
+    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
+    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 30)
+    aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
+    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
+    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
 
-crypto_set = set()
-sconto_percentuale = 2
-string = []
-string.append("START: Criptovalute nel portafoglio:")
-##print("Criptovalute nel portafoglio:")
-for data_acquisto, nome_crypto in crypto_portfolio.keys():
-    if nome_crypto not in crypto_set:
-        print("1 ",nome_crypto)
-        giorni_passati = giorni_passati_da_minimo_locale_con_sconto(nome_crypto, sconto_percentuale)
-        if giorni_passati is not None:
-            string.append(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
-            ##print(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
-        else:
-            ##print(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
-            string.appedd(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
+    crypto_set = set()
+    sconto_percentuale = 2
+    string = []
+    string.append("START: Criptovalute nel portafoglio:")
+    ##print("Criptovalute nel portafoglio:")
+    for data_acquisto, nome_crypto in crypto_portfolio.keys():
+        if nome_crypto not in crypto_set:
+            print("1 ",nome_crypto)
+            giorni_passati = giorni_passati_da_minimo_locale_con_sconto(nome_crypto, sconto_percentuale)
+            if giorni_passati is not None:
+                string.append(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
+                ##print(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
+            else:
+                ##print(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
+                string.appedd(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
 
-        num_giorni = 5
+            num_giorni = 5
 
-        trend, variazione_percentuale = trend_e_variazione_percentuale(nome_crypto, num_giorni)
+            trend, variazione_percentuale = trend_e_variazione_percentuale(nome_crypto, num_giorni)
 
-        ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
-        string.append(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
-        num_giorni = 2
+            ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
+            string.append(f"{num_giorni} giorni: {nome_crypto} {trend} {variazione_percentuale:.2f}%.")
+            num_giorni = 2
 
-        trend, variazione_percentuale = trend_e_variazione_percentuale(nome_crypto, num_giorni)
+            trend, variazione_percentuale = trend_e_variazione_percentuale(nome_crypto, num_giorni)
 
-        ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
-        string.append(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
-        crypto_set.add(nome_crypto)
+            ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
+            string.append(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
+            crypto_set.add(nome_crypto)
 
-        a, string_acquisti = reso_totale_per_criptovaluta(crypto_portfolio,nome_crypto)
-        string.append(string_acquisti)
+            a, string_acquisti = reso_totale_per_criptovaluta(crypto_portfolio,nome_crypto)
+            string.append(string_acquisti)
 
-        #plot_andamento_cripto(nome_crypto, crypto_portfolio)
-    for info in string:
-        if isinstance(info, str):
-            print(info)
-        elif isinstance(info, list):
-            for i in info:
-                print(i)
-        else:
-            print("It's neither a string nor a list")
+    return string
 
 
 
-sys.exit()
+
+
+
+
+
+
+
 
