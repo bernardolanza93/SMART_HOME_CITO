@@ -327,7 +327,7 @@ except Exception as e:
 
 sensor = Adafruit_DHT.DHT11
 pin = 4
-
+crea_file_utenti_autorizzati()
 
 
 print("||_||_ CHECK BOT")
