@@ -7,6 +7,7 @@ import socket
 import struct
 from datetime import datetime
 import cv2
+import time
 
 MAX_DGRAM = 2 ** 16
 
@@ -22,9 +23,7 @@ def dump_buffer(s):
 
 
 def listen_for_TCP_string(string_from_tcp_ID):
-   
-    
-
+    time.sleep(10)
     #port = 1025
     #ip = '127.0.0.1'
     port = 21001
@@ -34,6 +33,7 @@ def listen_for_TCP_string(string_from_tcp_ID):
 
     s.bind((ip, port))
     print("reciving config: IP = {}, PORT = {}. ".format(ip, port))
+
 
     while True:
 

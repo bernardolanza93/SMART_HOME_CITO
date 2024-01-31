@@ -13,7 +13,6 @@ import matplotlib.dates as mdates
 import socket
 import psutil
 from simple_scaraper_portfolio import *
-import re
 
 import multiprocessing
 import os
@@ -32,33 +31,6 @@ path = path_here + "/data/"
 bernardo_chat_id = "283149655"
 
 
-def converti_formato_data(testo):
-    # Definiamo un'espressione regolare per cercare date nel formato YYYY-MM-DD
-    regex_data = r'\b(\d{4})-(\d{2})-(\d{2})\b'
-
-    # Cerchiamo tutte le date nel testo
-    match_date = re.findall(regex_data, testo)
-
-    # Se troviamo delle date, le convertiamo nel formato DDmonYY
-    if match_date:
-        for match in match_date:
-            # Estraiamo i componenti della data
-            anno, mese, giorno = match
-
-            # Convertiamo il mese nel formato abbreviato
-            mesi_abbreviati = {'01': 'gen', '02': 'feb', '03': 'mar', '04': 'apr', '05': 'mag',
-                               '06': 'giu', '07': 'lug', '08': 'ago', '09': 'set', '10': 'ott',
-                               '11': 'nov', '12': 'dic'}
-            mese_abbreviato = mesi_abbreviati[mese]
-
-            # Costruiamo la nuova data nel formato DDmonYY
-            nuova_data = f"{giorno}{mese_abbreviato}{anno[2:]}"
-
-            # Sostituiamo la data nel testo originale
-            testo = testo.replace(f"{anno}-{mese}-{giorno}", nuova_data)
-
-    # Ritorniamo il testo con le date convertite
-    return testo
 
 def aggiungi_utente_autorizzato(chat_id, nome):
     if os.path.exists("utenti_autorizzati.json"):
