@@ -162,9 +162,8 @@ def on_chat_message(msg):
     who = msg['from']['first_name']
     what = msg['text']
 
-    bot.sendMessage(chat_id, "Hi" + str(who))
-    bot.sendMessage(chat_id, "you say:")
-    bot.sendMessage(chat_id, what)
+    bot.sendMessage(chat_id, "Hi " + str(who) + " you say:" +str(what))
+
     if not autorizzazione:
         bot.sendMessage(bernardo_chat_id,   str(who) + " says: " + str(what) + "[SU-COM]")
 
