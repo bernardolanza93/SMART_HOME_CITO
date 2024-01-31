@@ -7,7 +7,12 @@ import json
 import os
 import re
 
+def rimuovi_USDT(nome_criptovaluta):
+    # Dividi il nome della criptovaluta utilizzando '/'
+    parti_nome = nome_criptovaluta.split('/')
 
+    # Ritorna la prima parte del nome (prima di '/')
+    return parti_nome[0]
 
 def converti_formato_data(testo):
     # Definiamo un'espressione regolare per cercare date nel formato YYYY-MM-DD
@@ -259,13 +264,13 @@ def reso_totale_per_criptovaluta(crypto_portfolio, symbol, esprimi_percentuale=T
             rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto)
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
-            string_acquisti.append(f"[{data_acquisto}] {symbol}|{importo} USD : {rendimento:.2f}%")
+            string_acquisti.append(f"[{data_acquisto}] {rimuovi_USDT(symbol)}|{importo} USD : {rendimento:.2f}%")
 
             ##print(f" {symbol} ASSET: {importo} USD del {data_acquisto}, RENDIMENTO: {rendimento:.2f}%")
 
 
     reso_totale_percentuale = (total_returns / total_invested) * 100
-    string_acquisti.append(f"TOTALE {symbol}: {reso_totale_percentuale:.2f}% [{total_returns:.2f} / {total_invested} USD ]")
+    string_acquisti.append(f"totale {rimuovi_USDT(symbol)}: {reso_totale_percentuale:.2f}% [{total_returns:.2f} / {total_invested} USD ]")
     ##print(f"RENDIMENTO TOTALE {symbol}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}USD). Deposito: {total_invested} USD")
     return reso_totale_percentuale ,string_acquisti
 
@@ -316,7 +321,7 @@ def crypto_request():
     string_all_buyed_asset =[]
     dict_minimi = {}
     dict_short_value ={}
-    defi_string.append("START: Criptovalute nel portafoglio:")
+    defi_string.append("CRIPTOVALUTE:")
     ##print("Criptovalute nel portafoglio:")
     for data_acquisto, nome_crypto in crypto_portfolio.keys():
         print(nome_crypto)
@@ -351,16 +356,16 @@ def crypto_request():
             a, string_acquisti = reso_totale_per_criptovaluta(crypto_portfolio,nome_crypto)
             string_all_buyed_asset.extend(string_acquisti)
 
-    defi_string.append("LOCAL LAST MIN")
+    defi_string.append("ULTIMO MINIMO LOCALE:")
     for crypto, value in dict_minimi.items():
         # Stampo la stringa e il valore associato
-        defi_string.append(f" {crypto} minimum: {value} gg")
+        defi_string.append(f"{rimuovi_USDT(crypto)}: {value} g")
 
     # Ciclo attraverso ogni elemento del dizionario
-    defi_string.append("| crypto | 2 gg | 5 gg |")
+    defi_string.append("| TREND | 2 gg | 5 gg |")
     for key, values in dict_short_value.items():
         # Stampa la stringa della chiave
-        defi_string.append(f"|{key}| : |{values[0]:.2f}% |{values[1]:.2f}% ")
+        defi_string.append(f"|{rimuovi_USDT(key)}| : |{values[0]:.2f}%|{values[1]:.2f}%|")
 
     defi_string.extend(string_all_buyed_asset)
 
