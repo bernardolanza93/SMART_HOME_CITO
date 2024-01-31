@@ -373,8 +373,7 @@ def crypto_request():
 
 
 
-string = "oggi è il [2023-01-27]"
-print(converti_formato_data(string))
+
 
 
 
