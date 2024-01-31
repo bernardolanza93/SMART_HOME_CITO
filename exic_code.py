@@ -47,7 +47,7 @@ def controllo_autorizzazione_utente(chat_id):
         utenti_autorizzati = json.load(file)
         if str(chat_id) in utenti_autorizzati:
             print("AUTOR:", utenti_autorizzati, str(chat_id))
-            return 1, utenti_autorizzati[chat_id]
+            return 1, utenti_autorizzati[str(chat_id)]
 
         else:
             print("NOT:", utenti_autorizzati, str(chat_id))
