@@ -151,21 +151,30 @@ def write_data_csv():
     
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
+    rispondi = 0
     autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
 
     who = msg['from']['first_name']
+    what = msg['data']
     bot.sendMessage(chat_id, "Hi" + str(who))
     bot.sendMessage(chat_id, "you say:")
     bot.sendMessage(chat_id, msg['data'])
     if not autorizzazione:
+        bot.sendMessage(bernardo_chat_id,  + str(who) + " says" + str(what) + "[SU-COM]")
 
         if msg['data']  == 'Juve':
             bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
+            rispondi = 1
         else:
             bot.sendMessage(chat_id, "NOT AUTHORIZED ILLEGAL USE OF THE BOT")
             bot.sendMessage(chat_id, "CALLING CARABINIERI  113....")
+            rispondi = 0
     else:
+        bot.sendMessage(chat_id, "BENTORNATO "+ str(who))
+        rispondi = 1
 
+
+    if rispondi:
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
                                         [InlineKeyboardButton(text="INFO",callback_data='info'),
                                          InlineKeyboardButton(text="CANCELLO",callback_data='open1'),
@@ -190,32 +199,6 @@ def on_callback_query(msg):
     info = bot.getChat(chat_id)
 
 
-    respond = 0
-
-    autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
-
-
-    if not autorizzazione:
-        #manda a me
-        bot.sendMessage(bernardo_chat_id, " the user "+ str(chat_id) + " says :" + str(msg))
-
-        #risponde a lui
-        if str(msg) == "Juve":
-            bot.sendMessage(chat_id, "you said well" + str(chat_id) + " .FORZA JUVE SEMPRE")
-            bot.sendMessage(chat_id, "WELCOME STRANGER!" )
-            respond = 1
-        else:
-            bot.sendMessage(chat_id, "You said:")
-            bot.sendMessage(chat_id, msg)
-            bot.sendMessage(chat_id, "NOT AUTHORIZED ILLEGAL USE OF THE BOT")
-            bot.sendMessage(chat_id, "CALLING CARABINIERI  113....")
-            respond = 0
-
-
-    else:
-
-        bot.sendMessage(chat_id, "Hi Bernardo SUPERUSER! My Master :)")
-        respond = 1
 
 
 
@@ -223,90 +206,91 @@ def on_callback_query(msg):
 
 
 
-    if autorizzazione == 1:
-
-        if query_data=='info':
-            print("||_||_ CHECK INFO LOG")
-            bot.sendMessage(chat_id, "CHAT:")
-            bot.sendMessage(chat_id, str(chat_id))
-
-            now = datetime.now()
-            hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-            cpu = CPUTemperature()
-            bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
-            bot.sendMessage(chat_id, str(hourstr))
-            bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
-            loggingR.error("(info)______________________EVENT____________________")
-
-            loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
-
-            loggingR.error("UTENTE: %s", str(info))
-
-            print("||_||_ CHECK STATUS")
-            bot.sendMessage(chat_id, "data from the raspi...")
-            username = os.getlogin()
-            bot.sendMessage(chat_id, "username")
-            bot.sendMessage(chat_id, username)
-
-            # Get the hostname
-            hostname = socket.gethostname()
-            # Get the IP address
-            ip_address = socket.gethostbyname(hostname)
-            bot.sendMessage(chat_id, "hostname")
-            bot.sendMessage(chat_id, hostname)
-            bot.sendMessage(chat_id, "ip_address")
-            bot.sendMessage(chat_id, ip_address)
-
-            # Current process ID
-            current_pid = os.getpid()
-            bot.sendMessage(chat_id,"Current Process ID: ")
-            bot.sendMessage(chat_id,current_pid)
-            # Parent process ID
-            parent_pid = os.getppid()
-            bot.sendMessage(chat_id,"Parent Process ID: ")
-            bot.sendMessage(chat_id,parent_pid)
 
 
 
-        elif query_data=='open1':
-            print("||_||_ CHECK CANCELLO")
+    if query_data=='info':
+        print("||_||_ CHECK INFO LOG")
+        bot.sendMessage(chat_id, "CHAT:")
+        bot.sendMessage(chat_id, str(chat_id))
 
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(3, GPIO.OUT)
-            GPIO.output(3, GPIO.HIGH)
-            GPIO.output(3, GPIO.LOW)
-            sleep(1)
-            GPIO.output(3, GPIO.HIGH)
-            bot.sendMessage(chat_id, "apertura cancello...")
-            now = datetime.now()
-            hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-            loggingR.error("(open1)______________________EVENT____________________")
+        now = datetime.now()
+        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+        cpu = CPUTemperature()
+        bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
+        bot.sendMessage(chat_id, str(hourstr))
+        bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
+        loggingR.error("(info)______________________EVENT____________________")
 
-            loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
-            loggingR.error("UTENTE: %s", str(info))
-            bot.sendMessage(chat_id, "ID CHAT:")
-            bot.sendMessage(chat_id, str(chat_id))
+        loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
+
+        loggingR.error("UTENTE: %s", str(info))
+
+        print("||_||_ CHECK STATUS")
+        bot.sendMessage(chat_id, "data from the raspi...")
+        username = os.getlogin()
+        bot.sendMessage(chat_id, "username")
+        bot.sendMessage(chat_id, username)
+
+        # Get the hostname
+        hostname = socket.gethostname()
+        # Get the IP address
+        ip_address = socket.gethostbyname(hostname)
+        bot.sendMessage(chat_id, "hostname")
+        bot.sendMessage(chat_id, hostname)
+        bot.sendMessage(chat_id, "ip_address")
+        bot.sendMessage(chat_id, ip_address)
+
+        # Current process ID
+        current_pid = os.getpid()
+        bot.sendMessage(chat_id,"Current Process ID: ")
+        bot.sendMessage(chat_id,current_pid)
+        # Parent process ID
+        parent_pid = os.getppid()
+        bot.sendMessage(chat_id,"Parent Process ID: ")
+        bot.sendMessage(chat_id,parent_pid)
 
 
-        elif query_data=='open2':
 
-            print("||_||_ CHECK REBOOT")
-            bot.sendMessage(chat_id, "reboot in corso...")
-            os.system('sudo reboot')
-            now = datetime.now()
-            hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-            loggingR.error("(open2)______________________EVENT____________________")
-            loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
-            loggingR.error("UTENTE: %s", str(info))
+    elif query_data=='open1':
+        print("||_||_ CHECK CANCELLO")
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(3, GPIO.OUT)
+        GPIO.output(3, GPIO.HIGH)
+        GPIO.output(3, GPIO.LOW)
+        sleep(1)
+        GPIO.output(3, GPIO.HIGH)
+        bot.sendMessage(chat_id, "apertura cancello...")
+        now = datetime.now()
+        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+        loggingR.error("(open1)______________________EVENT____________________")
+
+        loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
+        loggingR.error("UTENTE: %s", str(info))
+        bot.sendMessage(chat_id, "ID CHAT:")
+        bot.sendMessage(chat_id, str(chat_id))
 
 
-        elif query_data=='status':
+    elif query_data=='open2':
+
+        print("||_||_ CHECK REBOOT")
+        bot.sendMessage(chat_id, "reboot in corso...")
+        os.system('sudo reboot')
+        now = datetime.now()
+        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+        loggingR.error("(open2)______________________EVENT____________________")
+        loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
+        loggingR.error("UTENTE: %s", str(info))
 
 
-            crypto_string = leggi_stringa_oggi()
-            # plot_andamento_cripto(nome_crypto, crypto_portfolio)
-            for info in crypto_string:
-                bot.sendMessage(chat_id,info)
+    elif query_data=='status':
+
+
+        crypto_string = leggi_stringa_oggi()
+        # plot_andamento_cripto(nome_crypto, crypto_portfolio)
+        for info in crypto_string:
+            bot.sendMessage(chat_id,info)
 
 
 
