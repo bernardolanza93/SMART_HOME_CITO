@@ -307,12 +307,20 @@ def crypto_request():
     # Esempio di utilizzo
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 200)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 150)
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 15)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 160)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
+    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)
+    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2023-12-20', 10)
     aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 30)
+    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2024-01-31', 15)
     aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
     aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
     aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
+    aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
+    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
+
 
     crypto_set = set()
     sconto_percentuale = 2
