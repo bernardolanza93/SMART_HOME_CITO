@@ -45,12 +45,12 @@ def aggiungi_utente_autorizzato(chat_id, nome):
 def controllo_autorizzazione_utente(chat_id):
     with open("utenti_autorizzati.json", "r") as file:
         utenti_autorizzati = json.load(file)
-        if chat_id in utenti_autorizzati:
-            print("AUTOR:", utenti_autorizzati, chat_id)
+        if str(chat_id) in utenti_autorizzati:
+            print("AUTOR:", utenti_autorizzati, str(chat_id))
             return 1, utenti_autorizzati[chat_id]
 
         else:
-            print("NOT:", utenti_autorizzati, chat_id)
+            print("NOT:", utenti_autorizzati, str(chat_id))
             return 0, None
 
 # Our "on message" eventù
