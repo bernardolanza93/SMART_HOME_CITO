@@ -153,10 +153,11 @@ def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     rispondi = 0
     autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
-
+    print(msg)
+    print(type(msg))
     who = dict(msg['from']['first_name'])
     what = dict(msg['data'])
-    print(msg)
+
     bot.sendMessage(chat_id, "Hi" + str(who))
     bot.sendMessage(chat_id, "you say:")
     bot.sendMessage(chat_id, msg['data'])
