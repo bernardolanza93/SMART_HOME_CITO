@@ -18,6 +18,8 @@ def controlla_file():
         if oggi in dati:
             print(".")
         else:
+
+            print("adding data to file...")
             crypto_string = crypto_request()
             salva_stringa(crypto_string)
     else:

@@ -31,8 +31,37 @@ path = path_here + "/data/"
 bernardo_chat_id = "283149655"
 
 
+def aggiungi_utente_autorizzato(chat_id, nome):
+    if os.path.exists("utenti_autorizzati.json"):
+        with open("utenti_autorizzati.json", "r") as file:
+            utenti_autorizzati = json.load(file)
+        utenti_autorizzati[chat_id] = nome
+        with open("utenti_autorizzati.json", "w") as file:
+            json.dump(utenti_autorizzati, file)
+        print(f"Utente aggiunto: {nome} (ID Chat: {chat_id})")
+    else:
+        print("Il file utenti_autorizzati.json non esiste. Creare il file prima di aggiungere nuovi utenti.")
 
-# Our "on message" event
+def controllo_autorizzazione_utente(chat_id):
+    with open("utenti_autorizzati.json", "r") as file:
+        utenti_autorizzati = json.load(file)
+        if chat_id in utenti_autorizzati:
+            return 1, utenti_autorizzati[chat_id]
+        else:
+            return 0, None
+
+# Our "on message" eventù
+
+def crea_file_utenti_autorizzati():
+    if not os.path.exists("utenti_autorizzati.json"):
+        utenti_autorizzati = {
+            "283149655": "bernardo",
+            "505937736": "alessandro"
+        }
+        with open("utenti_autorizzati.json", "w") as file:
+            json.dump(utenti_autorizzati, file)
+        print("File utenti_autorizzati.json creato.")
+
 
 
 def check_folder(relative_path):
@@ -103,7 +132,12 @@ def make_graph():
 def write_data_csv():
     
     while True:
-        controlla_file()
+        # Get the current time
+        current_time = datetime.now().time()
+
+        # Check if it's after 8 AM
+        if current_time.hour >= 8:
+            controlla_file()
         time.sleep(10)
         
 
@@ -117,31 +151,51 @@ def write_data_csv():
     
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                                    [InlineKeyboardButton(text="INFO",callback_data='info'),
-                                     InlineKeyboardButton(text="CANCELLO",callback_data='open1'),
-                                     InlineKeyboardButton(text="CRYPTO", callback_data='status'),
-                                     InlineKeyboardButton(text="REBOOT", callback_data='open2')
-                                     ]
-                                    
-                                ]
-                            )
+    autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
 
-    bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
+    who = msg['from']['first_name']
+    bot.sendMessage(chat_id, "Hi" + str(who))
+    bot.sendMessage(chat_id, "you say:")
+    bot.sendMessage(chat_id, msg['data'])
+    if not autorizzazione:
 
- 
-    print("||_||_ CHECK BOT MENU")
+        if msg['data']  == 'Juve':
+            bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
+        else:
+            bot.sendMessage(chat_id, "NOT AUTHORIZED ILLEGAL USE OF THE BOT")
+            bot.sendMessage(chat_id, "CALLING CARABINIERI  113....")
+    else:
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                                        [InlineKeyboardButton(text="INFO",callback_data='info'),
+                                         InlineKeyboardButton(text="CANCELLO",callback_data='open1'),
+                                         InlineKeyboardButton(text="CRYPTO", callback_data='status'),
+                                         InlineKeyboardButton(text="REBOOT", callback_data='open2')
+                                         ]
+
+                                    ]
+                                )
+
+        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
+
+
+        print("||_||_ CHECK BOT MENU")
 
 def on_callback_query(msg):
+
     query_id, chat_id, query_data = telepot.glance(msg, flavor='callback_query')
     print('Callback Query:', query_id, chat_id, query_data)
     file_path = '/home/pi/plot_data_citofono.png'
     file_path1 = '/home/pi/plot_rec.png'
     info = bot.getChat(chat_id)
 
+
     respond = 0
 
-    if str(chat_id) != bernardo_chat_id:
+    autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
+
+
+    if not autorizzazione:
         #manda a me
         bot.sendMessage(bernardo_chat_id, " the user "+ str(chat_id) + " says :" + str(msg))
 
@@ -169,7 +223,7 @@ def on_callback_query(msg):
 
 
 
-    if respond == 1:
+    if autorizzazione == 1:
 
         if query_data=='info':
             print("||_||_ CHECK INFO LOG")
