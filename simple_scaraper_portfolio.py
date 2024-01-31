@@ -317,6 +317,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2024-01-31', 15)
     aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
     aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
+    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-01-31', 10)
     aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
     aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
     aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
