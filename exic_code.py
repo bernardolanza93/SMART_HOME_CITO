@@ -154,9 +154,10 @@ def on_chat_message(msg):
     rispondi = 0
     autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
 
-    who = msg['from']['first_name']
-    what = msg['data']
-    bot.sendMessage(chat_id, "Hi" + str(who))
+    who = dict(msg['from']['first_name'])
+    what = dict(msg['data'])
+    print(msg)
+    bot.sendMessage(chat_id,my_dict "Hi" + str(who))
     bot.sendMessage(chat_id, "you say:")
     bot.sendMessage(chat_id, msg['data'])
     if not autorizzazione:
