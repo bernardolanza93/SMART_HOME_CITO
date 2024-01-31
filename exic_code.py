@@ -46,8 +46,11 @@ def controllo_autorizzazione_utente(chat_id):
     with open("utenti_autorizzati.json", "r") as file:
         utenti_autorizzati = json.load(file)
         if chat_id in utenti_autorizzati:
+            print("AUTOR:", utenti_autorizzati, chat_id)
             return 1, utenti_autorizzati[chat_id]
+
         else:
+            print("NOT:", utenti_autorizzati, chat_id)
             return 0, None
 
 # Our "on message" eventù
@@ -163,7 +166,7 @@ def on_chat_message(msg):
     bot.sendMessage(chat_id, "you say:")
     bot.sendMessage(chat_id, what)
     if not autorizzazione:
-        bot.sendMessage(bernardo_chat_id,   str(who) + " says" + str(what) + "[SU-COM]")
+        bot.sendMessage(bernardo_chat_id,   str(who) + " says: " + str(what) + "[SU-COM]")
 
         if str(what)  == 'Juve':
             bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
