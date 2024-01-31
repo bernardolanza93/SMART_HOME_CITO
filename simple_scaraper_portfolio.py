@@ -264,13 +264,13 @@ def reso_totale_per_criptovaluta(crypto_portfolio, symbol, esprimi_percentuale=T
             rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto)
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
-            string_acquisti.append(f"[{data_acquisto}] {rimuovi_USDT(symbol)}|{importo} USD : {rendimento:.2f}%")
+            string_acquisti.append(f"{rimuovi_USDT(symbol)} {importo}USD: {rendimento:.2f}% [{data_acquisto}]")
 
             ##print(f" {symbol} ASSET: {importo} USD del {data_acquisto}, RENDIMENTO: {rendimento:.2f}%")
 
 
     reso_totale_percentuale = (total_returns / total_invested) * 100
-    string_acquisti.append(f"totale {rimuovi_USDT(symbol)}: {reso_totale_percentuale:.2f}% [{total_returns:.2f} / {total_invested} USD ]")
+    string_acquisti.append(f"Tot {rimuovi_USDT(symbol)}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}/{total_invested}USD)")
     ##print(f"RENDIMENTO TOTALE {symbol}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}USD). Deposito: {total_invested} USD")
     return reso_totale_percentuale ,string_acquisti
 
