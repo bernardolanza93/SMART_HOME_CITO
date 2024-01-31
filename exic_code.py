@@ -163,7 +163,7 @@ def on_chat_message(msg):
     bot.sendMessage(chat_id, "you say:")
     bot.sendMessage(chat_id, what)
     if not autorizzazione:
-        bot.sendMessage(bernardo_chat_id,  + str(who) + " says" + str(what) + "[SU-COM]")
+        bot.sendMessage(bernardo_chat_id,   str(who) + " says" + str(what) + "[SU-COM]")
 
         if str(what)  == 'Juve':
             bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
