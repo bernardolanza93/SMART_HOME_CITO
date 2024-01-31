@@ -155,6 +155,7 @@ def on_chat_message(msg):
     autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
     print(msg)
     print(type(msg))
+    print(msg['from'])
     who = msg['from']['first_name']
     what = msg['text']
 
