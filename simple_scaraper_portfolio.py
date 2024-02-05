@@ -7,6 +7,35 @@ import json
 import os
 import re
 
+
+def reso_totale_per_portafoglio(crypto_portfolio):
+    total_invested = 0
+    total_returns = 0
+
+    string_acquisti = []
+
+    # Ciclo attraverso tutte le coppie chiave-valore nel dizionario
+    for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
+        # Calcolo del rendimento parziale per ogni criptovaluta nel portafoglio
+        rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto)
+        reso_acquisto = importo * rendimento / 100
+
+        # Aggiornamento del totale investito e del rendimento totale
+        total_invested += importo
+        total_returns += reso_acquisto
+
+        # Costruzione della stringa relativa agli acquisti per ogni criptovaluta
+        #string_acquisti.append(f"{nome_crypto}: {importo} USD, Rendimento: {rendimento:.2f}%")
+
+    # Calcolo del rendimento totale percentuale
+    reso_totale_percentuale = (total_returns / total_invested) * 100
+
+    # Aggiunta delle informazioni sul rendimento totale alla stringa degli acquisti
+    string_acquisti.append(f"PORTAFOGLIO: {reso_totale_percentuale:.2f}%, {total_returns:.2f}/{total_invested:.2f} USD")
+
+    # Ritorno del rendimento totale percentuale e della lista delle informazioni sugli acquisti
+    return string_acquisti
+
 def rimuovi_USDT(nome_criptovaluta):
     # Dividi il nome della criptovaluta utilizzando '/'
     parti_nome = nome_criptovaluta.split('/')
@@ -254,23 +283,25 @@ def reso_totale_per_criptovaluta(crypto_portfolio, symbol, esprimi_percentuale=T
     total_returns = 0
 
     string_acquisti = []
+    string_acquisti.append(f"{rimuovi_USDT(symbol)}:")
 
     #print(f"Dettagli degli acquisti per {symbol}:")
     for data_acquisto, nome_crypto in crypto_portfolio.keys():
         if nome_crypto == symbol:
+
             importo = crypto_portfolio[(data_acquisto, nome_crypto)]
             total_invested += importo
 
             rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto)
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
-            string_acquisti.append(f"{rimuovi_USDT(symbol)} {importo}USD: {rendimento:.2f}% [{data_acquisto}]")
+            string_acquisti.append(f"{importo} USD: {rendimento:.2f}% [{data_acquisto}]")
 
             ##print(f" {symbol} ASSET: {importo} USD del {data_acquisto}, RENDIMENTO: {rendimento:.2f}%")
 
 
     reso_totale_percentuale = (total_returns / total_invested) * 100
-    string_acquisti.append(f"Tot {rimuovi_USDT(symbol)}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}/{total_invested}USD)")
+    string_acquisti.append(f"Total: {reso_totale_percentuale:.2f}% ({total_returns:.2f}/{total_invested}USD)")
     ##print(f"RENDIMENTO TOTALE {symbol}: {reso_totale_percentuale:.2f}% ({total_returns:.2f}USD). Deposito: {total_invested} USD")
     return reso_totale_percentuale ,string_acquisti
 
@@ -330,7 +361,8 @@ def crypto_request():
     string_all_buyed_asset =[]
     dict_minimi = {}
     dict_short_value ={}
-    defi_string.append("CRIPTOVALUTE:")
+    today = datetime.now().strftime("%Y-%m-%d")
+    defi_string.append("CRIPTOVALUTE: " + str(today))
     ##print("Criptovalute nel portafoglio:")
     for data_acquisto, nome_crypto in crypto_portfolio.keys():
         print(nome_crypto)
@@ -365,6 +397,8 @@ def crypto_request():
             a, string_acquisti = reso_totale_per_criptovaluta(crypto_portfolio,nome_crypto)
             string_all_buyed_asset.extend(string_acquisti)
 
+
+
     defi_string.append("ULTIMO MINIMO LOCALE:")
     for crypto, value in dict_minimi.items():
         # Stampo la stringa e il valore associato
@@ -377,6 +411,8 @@ def crypto_request():
         defi_string.append(f"|{rimuovi_USDT(key)}| : |{values[0]:.2f}%|{values[1]:.2f}%|")
 
     defi_string.extend(string_all_buyed_asset)
+    total = reso_totale_per_portafoglio(crypto_portfolio)
+    defi_string.append(total)
 
 
     #print(defi_string)
