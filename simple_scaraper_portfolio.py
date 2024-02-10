@@ -350,6 +350,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
     aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-01-31', 10)
     aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
+    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-02-07', 20)
     aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
     aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
 
@@ -379,16 +380,17 @@ def crypto_request():
                 #string.appedd(f"Nessun minimo locale con sconto del 5% trovato per {nome_crypto}.")
                 dict_minimi[nome_crypto] = 99999
 
-            num_giorni_5 = 5
 
-            trend_5, variazione_percentuale_5 = trend_e_variazione_percentuale(nome_crypto, num_giorni_5)
 
             ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
             #string.append(f"{num_giorni_5} giorni: {nome_crypto} {trend_5} {variazione_percentuale_5:.2f}%.")
             num_giorni_2 = 2
-
             trend_2, variazione_percentuale_2 = trend_e_variazione_percentuale(nome_crypto, num_giorni_2)
-            dict_short_value[nome_crypto] = (variazione_percentuale_2, variazione_percentuale_5)
+            num_giorni_4 = 4
+            trend_4, variazione_percentuale_4 = trend_e_variazione_percentuale(nome_crypto, num_giorni_4)
+            num_giorni_8 = 8
+            trend_8, variazione_percentuale_8 = trend_e_variazione_percentuale(nome_crypto, num_giorni_8)
+            dict_short_value[nome_crypto] = (variazione_percentuale_2, variazione_percentuale_4, variazione_percentuale_8)
 
             ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
             #string.append(f"{num_giorni_2} giorni: {nome_crypto} in {trend_2} del {variazione_percentuale_2:.2f}%.")
@@ -405,20 +407,27 @@ def crypto_request():
         defi_string.append(f"{rimuovi_USDT(crypto)}: {value} g")
 
     # Ciclo attraverso ogni elemento del dizionario
-    defi_string.append("| TREND | 2 gg | 5 gg |")
+    defi_string.append("| TREND | 2 gg | 4 gg | 8 gg |")
     for key, values in dict_short_value.items():
         # Stampa la stringa della chiave
-        defi_string.append(f"|{rimuovi_USDT(key)}| : |{values[0]:.2f}%|{values[1]:.2f}%|")
+        defi_string.append(f"|{rimuovi_USDT(key)}|: |{values[0]:.2f}%|{values[1]:.2f}%|{values[2]:.2f}%|")
+
+
 
     defi_string.extend(string_all_buyed_asset)
     total = reso_totale_per_portafoglio(crypto_portfolio)
-    defi_string.append(total)
+    defi_string.append(total[0])
 
 
     #print(defi_string)
 
 
     return defi_string
+
+crypto_string = crypto_request()
+for info in crypto_string:
+    info_c = converti_formato_data(info)
+    print(info_c)
 
 
 
