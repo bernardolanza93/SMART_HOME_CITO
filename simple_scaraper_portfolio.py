@@ -424,10 +424,7 @@ def crypto_request():
 
     return defi_string
 
-crypto_string = crypto_request()
-for info in crypto_string:
-    info_c = converti_formato_data(info)
-    print(info_c)
+
 
 
 
