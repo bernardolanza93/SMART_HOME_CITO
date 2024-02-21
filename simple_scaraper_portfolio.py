@@ -6,6 +6,32 @@ import matplotlib.pyplot as plt
 import json
 import os
 import re
+from CONSTANT import *
+
+
+def delete_file(file_path):
+    """
+    Cancella il file specificato dal percorso.
+
+    Args:
+        file_path (str): Percorso del file da cancellare.
+
+    Returns:
+        bool: True se il file è stato cancellato con successo, False altrimenti.
+    """
+    try:
+        os.remove(file_path)
+        print(f"Il file '{file_path}' è stato cancellato con successo.")
+        return True
+    except FileNotFoundError:
+        print(f"Il file '{file_path}' non è stato trovato.")
+        return False
+    except Exception as e:
+        print(f"Si è verificato un errore durante la cancellazione del file '{file_path}': {e}")
+        return False
+
+
+
 
 
 def reso_totale_per_portafoglio(crypto_portfolio):
@@ -75,16 +101,16 @@ def controlla_file():
     oggi = datetime.now().strftime('%Y-%m-%d')
 
     # Controlla se il file esiste
-    if os.path.exists("dati.json"):
+    if os.path.exists(FILEPATH_DATI):
         # Leggi il contenuto del file
         with open("dati.json", "r") as file:
             dati = json.load(file)
         # Controlla se la data di oggi è presente nel dizionario
         if oggi in dati:
-            print(".")
+            print("dati di oggi gia presenti")
         else:
 
-            print("adding data to file...")
+            print("oggi mancante, adding data to file...")
             crypto_string = crypto_request()
             salva_stringa(crypto_string)
     else:
@@ -100,19 +126,28 @@ def leggi_stringa_oggi():
     oggi = datetime.now().strftime('%Y-%m-%d')
 
     # Controlla se il file esiste
-    if os.path.exists("dati.json"):
+    if os.path.exists(FILEPATH_DATI):
         # Leggi il contenuto del file
-        with open("dati.json", "r") as file:
+        with open(FILEPATH_DATI, "r") as file:
             dati = json.load(file)
         # Controlla se la data di oggi è presente nel dizionario
         if oggi in dati:
             print("Stringa/e trovata/e per oggi:")
             return dati[oggi]
         else:
-            print("Nessuna stringa trovata per oggi.")
+            print("Nessuna stringa trovata per oggi. faccio la cripto request")
             crypto_string = crypto_request()
             salva_stringa(crypto_string)
-            return ["try one more", "time"]
+            print("nuova stringa dati salvata, lettura del file...")
+            with open(FILEPATH_DATI, "r") as file:
+                dati = json.load(file)
+            # Controlla se la data di oggi è presente nel dizionario
+            if oggi in dati:
+                print("file letto, stringa trovata :")
+                return dati[oggi]
+            else:
+                print("error 2 tentativo di lettura errato")
+                return ["try one more", "time"]
     else:
         print("Il file non esiste. Creazione del file...")
         # Crea un nuovo file con un dizionario vuoto
@@ -332,27 +367,74 @@ def get_crypto_percentage_change(symbol, start_date, end_date=None):
 
     return percentage_change
 
+def leggi_portfolio(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            print("portfolio letto")
+            return json.load(f)
+    else:
+        return {}
+
+def salva_portfolio(portfolio, file_path):
+    if os.path.exists(file_path):
+        print("porfolio esistente")
+        existing_portfolio = leggi_portfolio(file_path)
+        existing_portfolio.update(portfolio)
+        with open(file_path, 'w') as f:
+            json.dump(existing_portfolio, f)
+    else:
+        print("creo nuovo portfolio")
+        with open(file_path, 'w') as f:
+            json.dump(portfolio, f)
+
 def crypto_request():
 
+
+
     crypto_portfolio = {}
+
     # Esempio di utilizzo
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 200)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 15)
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 18)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 160)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2023-12-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 30)
-    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2024-01-31', 15)
-    aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
-    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
-    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-01-31', 10)
-    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
-    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-02-07', 20)
-    aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
-    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
+    # aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-06-09', 50)
+    # aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
+    # aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2023-12-15', 20)
+    # aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-11-10', 10)
+    # aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
+    # aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)
+    # aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2023-12-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 30)
+    # aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 10)
+    # aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2024-01-31', 15)
+    # aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
+    # aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
+    # aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-01-31', 10)
+    # aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
+    # aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-02-07', 20)
+    # aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
+    # aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
+    # aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-05-30', 8)
+    # aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-11-01', 20)
+    # aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2023-04-19', 8)
+    # aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2023-12-16', 12)
+    # aggiungi_crypto(crypto_portfolio, 'JTO/USDT', '2023-12-16', 11)
+    # aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-01-10', 2)
+    # aggiungi_crypto(crypto_portfolio, 'MDX/USDT', '2023-12-12', 2)
+    #
+    # aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-02-20', 8)
+    # aggiungi_crypto(crypto_portfolio, 'AGIX/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'NMR/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'HBAR/USDT', '2024-02-20', 10)
+    # aggiungi_crypto(crypto_portfolio, 'FET/USDT', '2024-02-20', 18)
+
+
+
 
 
     crypto_set = set()
@@ -410,21 +492,39 @@ def crypto_request():
     defi_string.append("| TREND | 2 gg | 4 gg | 8 gg |")
     for key, values in dict_short_value.items():
         # Stampa la stringa della chiave
-        defi_string.append(f"|{rimuovi_USDT(key)}|: |{values[0]:.2f}%|{values[1]:.2f}%|{values[2]:.2f}%|")
+        defi_string.append(f"|{rimuovi_USDT(key)}|: |{values[0]:.1f}%|{values[1]:.1f}%|{values[2]:.1f}%|")
 
-
-
-    defi_string.extend(string_all_buyed_asset)
     total = reso_totale_per_portafoglio(crypto_portfolio)
     defi_string.append(total[0])
+    defi_string.append("end_simple")
+    defi_string.extend(string_all_buyed_asset)
 
 
-    #print(defi_string)
+
+
+
+
 
 
     return defi_string
 
 
+# delete_file(FILEPATH_DATI)
+# #salva file con dati di oggi, se gia ci sono skippa
+# controlla_file()
+#
+# # print(defi_string)
+# crypto_string = leggi_stringa_oggi()
+# print(crypto_string)
+#
+# for info in crypto_string:
+#     info_c = converti_formato_data(info)
+#     if info_c == "end_simple":
+#         break
+#     else:
+#         print(info_c)
+#
+#
 
 
 

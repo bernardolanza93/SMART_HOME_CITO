@@ -13,6 +13,7 @@ import matplotlib.dates as mdates
 import socket
 import psutil
 from simple_scaraper_portfolio import *
+from CONSTANT import *
 
 import multiprocessing
 import os
@@ -25,10 +26,26 @@ import csv
 import pandas as pd
 
 
-string_from_tcp_ID = "null"
-path_here = os.getcwd()
-path = path_here + "/data/"
-bernardo_chat_id = "283149655"
+keyboard_1 = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="INFO", callback_data='info'),
+     InlineKeyboardButton(text="CANCELLO", callback_data='open1'),
+     InlineKeyboardButton(text="CRYPTO", callback_data='status'),
+     InlineKeyboardButton(text="REBOOT", callback_data='open2')
+     ]
+
+]
+)
+
+
+
+def create_inline_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='PORTFOLIO', callback_data='data')],
+        [InlineKeyboardButton(text='DELETE', callback_data='delete')],
+        [InlineKeyboardButton(text='null', callback_data='null')],
+        [InlineKeyboardButton(text='<-', callback_data='back_to_main_menu')],
+    ])
+    return keyboard
 
 
 
@@ -181,17 +198,9 @@ def on_chat_message(msg):
 
 
     if rispondi:
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                                        [InlineKeyboardButton(text="INFO",callback_data='info'),
-                                         InlineKeyboardButton(text="CANCELLO",callback_data='open1'),
-                                         InlineKeyboardButton(text="CRYPTO", callback_data='status'),
-                                         InlineKeyboardButton(text="REBOOT", callback_data='open2')
-                                         ]
 
-                                    ]
-                                )
 
-        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard)
+        bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard_1)
 
 
         print("||_||_ CHECK BOT MENU")
@@ -291,13 +300,32 @@ def on_callback_query(msg):
 
 
     elif query_data=='status':
+        # Send the submenu inline keyboard
+        bot.sendMessage(chat_id, 'CRYPTO:', reply_markup=create_inline_keyboard())
+
+
+
+    elif query_data=='data':
 
 
         crypto_string = leggi_stringa_oggi()
         # plot_andamento_cripto(nome_crypto, crypto_portfolio)
         for info in crypto_string:
             info_c = converti_formato_data(info)
-            bot.sendMessage(chat_id,info_c)
+            if info_c == "end_simple":
+                break
+            else:
+                bot.sendMessage(chat_id,info_c)
+
+    elif query_data == 'delete':
+
+        delete_file(FILEPATH_DATI)
+        bot.sendMessage(chat_id, 'distrutto:'+FILEPATH_DATI)
+
+
+    elif query_data == 'back_to_main_menu':
+        # Send the main menu inline keyboard again
+        bot.sendMessage(chat_id, 'Main Menu:', reply_markup=keyboard_1)
 
 
 
