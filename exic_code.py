@@ -237,7 +237,6 @@ def on_callback_query(msg):
         bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
         loggingR.error("(info)______________________EVENT____________________")
 
-        loggingR.error("INFO RICHIESTE____time: %s", str(hourstr))
 
         loggingR.error("UTENTE: %s", str(info))
 
@@ -253,17 +252,13 @@ def on_callback_query(msg):
         ip_address = socket.gethostbyname(hostname)
         bot.sendMessage(chat_id, "hostname")
         bot.sendMessage(chat_id, hostname)
-        bot.sendMessage(chat_id, "ip_address")
-        bot.sendMessage(chat_id, ip_address)
 
-        # Current process ID
-        current_pid = os.getpid()
-        bot.sendMessage(chat_id,"Current Process ID: ")
-        bot.sendMessage(chat_id,current_pid)
-        # Parent process ID
-        parent_pid = os.getppid()
-        bot.sendMessage(chat_id,"Parent Process ID: ")
-        bot.sendMessage(chat_id,parent_pid)
+        last_pull = get_last_git_pull()
+        bot.sendMessage(chat_id,"Last Git pull:")
+        bot.sendMessage(chat_id,last_pull)
+
+
+
 
 
 

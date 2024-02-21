@@ -7,8 +7,29 @@ import json
 import os
 import re
 from CONSTANT import *
+import subprocess
 
 
+def get_last_git_pull():
+    try:
+        # Execute git log command to get the last pull
+        result = subprocess.run(['git', 'log', '--grep=Merge pull request'], capture_output=True, text=True)
+
+        # Check if the command was successful
+        if result.returncode == 0:
+            # Split the output by newline character to get individual commits
+            commits = result.stdout.split('\n')
+
+            # Check if any pull request merges are found
+            if len(commits) > 0:
+                last_pull = commits[0]
+                return last_pull
+            else:
+                return "No pull requests found"
+        else:
+            return "Git command failed"
+    except Exception as e:
+        return f"Error: {str(e)}"
 def delete_file(file_path):
     """
     Cancella il file specificato dal percorso.
@@ -531,6 +552,8 @@ def crypto_request():
 
 
 
+
+# Call the function to get the last git pull
 
 
 
