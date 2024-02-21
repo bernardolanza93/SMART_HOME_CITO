@@ -302,8 +302,9 @@ def on_callback_query(msg):
 
     elif query_data=='data':
 
-
+        bot.sendMessage(chat_id, 'aspettando i dati...')
         crypto_string = leggi_stringa_oggi()
+
         # plot_andamento_cripto(nome_crypto, crypto_portfolio)
         for info in crypto_string:
             info_c = converti_formato_data(info)

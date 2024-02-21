@@ -443,7 +443,6 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'JTO/USDT', '2023-12-16', 11)
     aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-01-10', 2)
     aggiungi_crypto(crypto_portfolio, 'MDX/USDT', '2023-12-12', 2)
-
     aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-02-20', 8)
     aggiungi_crypto(crypto_portfolio, 'AGIX/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-20', 10)
