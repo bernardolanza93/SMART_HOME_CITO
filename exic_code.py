@@ -29,7 +29,7 @@ import pandas as pd
 keyboard_1 = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="INFO", callback_data='info'),
      InlineKeyboardButton(text="CANCELLO", callback_data='open1'),
-     InlineKeyboardButton(text="CRYPTO", callback_data='status'),
+     InlineKeyboardButton(text="CRYPTO", callback_data='crypto'),
      InlineKeyboardButton(text="REBOOT", callback_data='open2')
      ]
 
@@ -37,12 +37,32 @@ keyboard_1 = InlineKeyboardMarkup(inline_keyboard=[
 )
 
 
+# Funzione per inviare un'immagine tramite Telepot
+def invia_immagine(chat_id, image_path, bot):
+    with open(image_path, 'rb') as image_file:
+        bot.sendPhoto(chat_id, image_file)
+
+# Funzione per inviare tutte le immagini presenti in una cartella
+def invia_immagini_in_cartella(cartella, chat_id, bot):
+    # Verifica se la cartella esiste
+    if not os.path.exists(cartella):
+        print(f"La cartella '{cartella}' non esiste.")
+        return
+
+    # Cicla su tutti i file nella cartella
+    for filename in os.listdir(cartella):
+        # Verifica se il file è un'immagine
+        if filename.endswith(".jpg") or filename.endswith(".png"):
+            image_path = os.path.join(cartella, filename)
+            # Invia l'immagine
+            invia_immagine(chat_id, image_path, bot)
+
 
 def create_inline_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='PORTFOLIO', callback_data='data')],
-        [InlineKeyboardButton(text='DELETE', callback_data='delete')],
-        [InlineKeyboardButton(text='null', callback_data='null')],
+        [InlineKeyboardButton(text='UPDATE', callback_data='update')],
+        [InlineKeyboardButton(text='PLOT', callback_data='plot')],
         [InlineKeyboardButton(text='<-', callback_data='back_to_main_menu')],
     ])
     return keyboard
@@ -294,7 +314,7 @@ def on_callback_query(msg):
         loggingR.error("UTENTE: %s", str(info))
 
 
-    elif query_data=='status':
+    elif query_data=='crypto':
         # Send the submenu inline keyboard
         bot.sendMessage(chat_id, 'CRYPTO:', reply_markup=create_inline_keyboard())
 
@@ -313,10 +333,20 @@ def on_callback_query(msg):
             else:
                 bot.sendMessage(chat_id,info_c)
 
-    elif query_data == 'delete':
+    elif query_data == 'update':
 
         delete_file(FILEPATH_DATI)
         bot.sendMessage(chat_id, 'distrutto:'+FILEPATH_DATI)
+        controlla_file()
+        bot.sendMessage(chat_id, "update completo, dati disponibile")
+        #cosi lo distruggo e lo ricreo- forse e troppo difficile calcellare solo l iìultima data. mi serve veramente salvare questi dati?
+        #qua inserisci l update
+
+    elif query_data == 'plot':
+        # Invia tutte le immagini nella cartella specificata
+        invia_immagini_in_cartella(FOLDER_GRAPH, chat_id, bot)
+        #qua potrei implementare una scelta dell plot.. non facile.. on chat message e tosto da prendere. un altra keyboard troppo lunga.
+
 
 
     elif query_data == 'back_to_main_menu':
