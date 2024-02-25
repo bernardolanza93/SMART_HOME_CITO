@@ -218,6 +218,9 @@ def on_chat_message(msg):
 
 
     if rispondi:
+        if str(what.split("_")[0]) == 'plot':
+            crypto_plot = what.split("_")[1]
+            invia_immagine(chat_id, FOLDER_GRAPH + "/" + crypto_plot + PLOT_STRING_TITLE,bot)
 
 
         bot.sendMessage(chat_id, "OPZIONI CASA SMART:", reply_markup=keyboard_1)
@@ -343,9 +346,11 @@ def on_callback_query(msg):
         #qua inserisci l update
 
     elif query_data == 'plot':
-        # Invia tutte le immagini nella cartella specificata
-        invia_immagini_in_cartella(FOLDER_GRAPH, chat_id, bot)
-        #qua potrei implementare una scelta dell plot.. non facile.. on chat message e tosto da prendere. un altra keyboard troppo lunga.
+
+        listing_c = image_inspector(FOLDER_GRAPH)
+        bot.sendMessage(chat_id, str(listing_c))
+
+
 
 
 

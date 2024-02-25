@@ -12,6 +12,25 @@ import pandas as pd
 import re
 
 
+def image_inspector(filepath):
+    # Lista per salvare le prime parti dei nomi dei file
+    crypto_names = []
+
+    # Scansiona i file nella cartella
+    for filename in os.listdir(filepath):
+        # Verifica che il file sia un'immagine
+        if filename.endswith(".png") or filename.endswith(".jpg"):
+            # Divide il nome del file in base all'underscore
+            parts = filename.split("_")
+            # Prendi la prima parte del nome del file (prima dell'underscore)
+            crypto_name = parts[0]
+            # Aggiungi la prima parte alla lista crypto_names
+            crypto_names.append(crypto_name)
+            # Se la tipologia di grafico non è stata ancora impostata, impostala
+
+    return (crypto_names)
+
+
 def custom_sort_key(element):
     # Utilizza espressione regolare per trovare il primo valore numerico nella stringa
     match = re.search(r'\d+', element)
@@ -669,7 +688,7 @@ def crypto_request():
     for crypto, value in dict_minimi.items():
         # Stampo la stringa e il valore associato
         values = dict_short_value[crypto]
-        defi_string.append(f"{rimuovi_USDT(crypto)}: {value}g |{dict_perc[crypto]:.1f}%|, ({dict_andam[crypto]}) |{values[0]:.1f}%|{values[1]:.1f}%|{values[2]:.1f}%|")
+        defi_string.append(f"{rimuovi_USDT(crypto)}:{value}g |{dict_perc[crypto]:.1f}%|({dict_andam[crypto]}) |{values[0]:.1f}%|{values[1]:.1f}%|{values[2]:.1f}%|")
 
     defi_string = sorted(defi_string, key=custom_sort_key, reverse=True)
     defi_string.insert(0, "LOCAL MIN | MODULE | TRENDS, ")
