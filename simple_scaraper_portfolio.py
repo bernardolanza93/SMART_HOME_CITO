@@ -127,7 +127,7 @@ def reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict):
     reso_totale_percentuale = (total_returns / total_invested) * 100
 
     # Aggiunta delle informazioni sul rendimento totale alla stringa degli acquisti
-    string_acquisti.append(f"PORTAFOGLIO: {reso_totale_percentuale:.2f}%, {total_returns:.2f}/{total_invested:.2f} USD")
+    string_acquisti.append(f"PORTAFOGLIO: {reso_totale_percentuale:.1f}%, {total_returns:.0f}/{total_invested:.0f} USD")
 
     # Ritorno del rendimento totale percentuale e della lista delle informazioni sugli acquisti
     return string_acquisti

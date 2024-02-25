@@ -60,10 +60,10 @@ def invia_immagini_in_cartella(cartella, chat_id, bot):
 
 def create_inline_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='PORTFOLIO', callback_data='data')],
-        [InlineKeyboardButton(text='UPDATE', callback_data='update')],
-        [InlineKeyboardButton(text='PLOT', callback_data='plot')],
-        [InlineKeyboardButton(text='<-', callback_data='back_to_main_menu')],
+        [InlineKeyboardButton(text='PORTFOLIO', callback_data='data'),
+        InlineKeyboardButton(text='UPDATE', callback_data='update'),
+        InlineKeyboardButton(text='PLOT', callback_data='plot'),
+        InlineKeyboardButton(text='<-', callback_data='back_to_main_menu')]
     ])
     return keyboard
 
