@@ -552,6 +552,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-29', 53)
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 25)
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 100)
 
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-23', 10)
