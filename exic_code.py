@@ -62,7 +62,7 @@ def create_inline_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='PORTFOLIO', callback_data='data'),
         InlineKeyboardButton(text='UPDATE', callback_data='update'),
-        InlineKeyboardButton(text='PLOT', callback_data='plot'),
+        InlineKeyboardButton(text='MOVES', callback_data='movers'),
         InlineKeyboardButton(text='<-', callback_data='back_to_main_menu')]
     ])
     return keyboard
@@ -325,7 +325,13 @@ def on_callback_query(msg):
 
     elif query_data=='data':
 
-        bot.sendMessage(chat_id, 'aspettando i dati...')
+        # Ottieni la data e l'ora correnti
+        current_datetime = datetime.now()
+
+        # Formatta la data e l'ora correnti con ore e minuti
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M")
+
+        bot.sendMessage(chat_id, str(formatted_datetime) + ' DATA')
         crypto_string = leggi_stringa_oggi()
 
         # plot_andamento_cripto(nome_crypto, crypto_portfolio)
@@ -341,14 +347,23 @@ def on_callback_query(msg):
         delete_file(FILEPATH_DATI)
         bot.sendMessage(chat_id, 'distrutto:'+FILEPATH_DATI)
         controlla_file()
-        bot.sendMessage(chat_id, "update completo, dati disponibile")
+        bot.sendMessage(chat_id, "update lanciato")
         #cosi lo distruggo e lo ricreo- forse e troppo difficile calcellare solo l iìultima data. mi serve veramente salvare questi dati?
         #qua inserisci l update
 
-    elif query_data == 'plot':
+    elif query_data == 'movers':
 
-        listing_c = image_inspector(FOLDER_GRAPH)
-        bot.sendMessage(chat_id, str(listing_c))
+        bot.sendMessage(chat_id, 'MOVERS:')
+        crypto_string = leggi_stringa_oggi()
+
+        pr = 0
+        for info in crypto_string:
+            info_c = converti_formato_data(info)
+            if info_c == "end_simple":
+                pr = 1
+            if pr == 1:
+                bot.sendMessage(chat_id, info_c)
+
 
 
 

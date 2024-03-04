@@ -30,10 +30,9 @@ def image_inspector(filepath):
 
     return (crypto_names)
 
-
 def custom_sort_key(element):
     # Utilizza espressione regolare per trovare il primo valore numerico nella stringa
-    match = re.search(r'\d+', element)
+    match = re.search(r'-?\d+', element)
     if match:
         # Restituisci il primo valore numerico trovato
         return -int(match.group())  # Aggiungi il segno negativo per l'ordinamento decrescente
@@ -66,7 +65,8 @@ def fetch_cryptocurrency_data(exchange, symbol, limit_days=365, frequency='1d'):
     return df
 
 
-def create_cryptocurrency_data_dict(exchange, symbols, limit_days=365, frequency='1d'):
+def create_cryptocurrency_data_dict(exchange, symbols, limit_days=730, frequency='1d'):
+    print(f"parto da {limit_days} giorni fa")
     data_dict = {}
     for symbol in symbols:
         try:
@@ -122,17 +122,19 @@ def delete_file(file_path):
 
 
 
-
-def reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict):
+def reso_totale_per_portafoglio(crypto_portfolio, crypto_data_dict, plusvalenze):
     total_invested = 0
     total_returns = 0
+
+    # Somma delle plusvalenze
+    total_plusvalenze = sum(plusvalenze)
 
     string_acquisti = []
 
     # Ciclo attraverso tutte le coppie chiave-valore nel dizionario
     for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
         # Calcolo del rendimento parziale per ogni criptovaluta nel portafoglio
-        rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto,crypto_data_dict)
+        rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto, crypto_data_dict)
         reso_acquisto = importo * rendimento / 100
 
         # Aggiornamento del totale investito e del rendimento totale
@@ -142,11 +144,14 @@ def reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict):
         # Costruzione della stringa relativa agli acquisti per ogni criptovaluta
         #string_acquisti.append(f"{nome_crypto}: {importo} USD, Rendimento: {rendimento:.2f}%")
 
+    # Sottrazione delle plusvalenze dal totale investito
+    total_invested -= total_plusvalenze
+
     # Calcolo del rendimento totale percentuale
     reso_totale_percentuale = (total_returns / total_invested) * 100
 
     # Aggiunta delle informazioni sul rendimento totale alla stringa degli acquisti
-    string_acquisti.append(f"PORTAFOGLIO: {reso_totale_percentuale:.1f}%, {total_returns:.0f}/{total_invested:.0f} USD")
+    string_acquisti.append(f"PORTAFOGLIO: {reso_totale_percentuale:.1f}%, {total_returns:.0f}/{total_invested:.0f}$ PLUS:{total_plusvalenze}$")
 
     # Ritorno del rendimento totale percentuale e della lista delle informazioni sugli acquisti
     return string_acquisti
@@ -268,93 +273,15 @@ def salva_stringa(lista_stringhe):
         json.dump(dati, file)
 
     print("Stringa/i salvata/e correttamente.")
-def plot_andamento_cripto(crypto_name, crypto_portfolio):
-    # Dividi la stringa del nome della criptovaluta per ottenere i simboli separati
-    base_symbol, quote_symbol = crypto_name.split('/')
-
-    # Verifica se ci sono acquisti per la criptovaluta specificata
-    acquisti_cripto = [(data, importo) for (data, cripto), importo in crypto_portfolio.items() if cripto == crypto_name]
-    if not acquisti_cripto:
-        print("Nessun acquisto trovato per la criptovaluta specificata.")
-        return
-
-    # Trova la data del primo acquisto
-    prima_data_acquisto = min([datetime.strptime(data, '%Y-%m-%d') for (data, _) in acquisti_cripto])
-
-    # Crea l'istanza del modulo di scambio CCXT
-    exchange = ccxt.binance()  # Puoi scegliere un altro scambio se preferisci
-
-    # Ottieni dati storici della criptovaluta fino alla data odierna
-    dati_storici = exchange.fetch_ohlcv(f"{base_symbol}/{quote_symbol}", '1d', int(prima_data_acquisto.timestamp() * 1000))
-
-    # Estrai le date e i prezzi di chiusura
-    date = [datetime.utcfromtimestamp(candle[0] / 1000) for candle in dati_storici]
-    prices = [candle[4] for candle in dati_storici]
-
-    # Crea il grafico
-    plt.plot(date, prices, label=crypto_name)
-
-    # Segna gli acquisti successivi con dei pallini rossi sul grafico
-    for data_acquisto, importo in acquisti_cripto:
-        if datetime.strptime(data_acquisto, '%Y-%m-%d') >= prima_data_acquisto:
-            plt.scatter(datetime.strptime(data_acquisto, '%Y-%m-%d'), prices[(datetime.strptime(data_acquisto, '%Y-%m-%d') - prima_data_acquisto).days], color='red')
-            plt.text(datetime.strptime(data_acquisto, '%Y-%m-%d'), prices[(datetime.strptime(data_acquisto, '%Y-%m-%d') - prima_data_acquisto).days], f"${importo}", verticalalignment='bottom')
-
-    # Imposta i limiti del grafico per iniziare dalla data del primo acquisto
-    plt.xlim(prima_data_acquisto, datetime.now())
-
-    # Aggiunta di etichette e titoli al grafico
-    plt.xlabel('Data')
-    plt.ylabel('Prezzo di Chiusura (USD)')
-    plt.title(f'Andamento di {crypto_name} dal {prima_data_acquisto.strftime("%Y-%m-%d")} a oggi')
-    plt.xticks(rotation=45)
-    plt.legend()
-
-    # Mostra il grafico
-    plt.show()
-
-
-def grafico_andamento_e_acquisto(symbol, periodo_passato, data_acquisto):
-    # Crea l'istanza del modulo di scambio CCXT
-    exchange = ccxt.binance()  # Puoi scegliere un altro scambio se preferisci
-
-    # Calcola la data di inizio del periodo specificato nel passato
-    data_inizio = datetime.now() - timedelta(days=periodo_passato)
-
-    # Ottieni dati storici della criptovaluta
-    ohlcv = exchange.fetch_ohlcv(symbol, '1d', int(data_inizio.timestamp()) * 1000)
-
-    # Estrai le date e i prezzi di chiusura
-    date = [datetime.utcfromtimestamp(candle[0] / 1000).strftime('%Y-%m-%d') for candle in ohlcv]
-    prices = [candle[4] for candle in ohlcv]
-
-    # Trova l'indice corrispondente al giorno di acquisto
-    try:
-        indice_acquisto = date.index(data_acquisto)
-    except ValueError:
-        raise ValueError(f"La data di acquisto ({data_acquisto}) non è presente nei dati storici.")
-
-    # Calcola la variazione percentuale rispetto ad oggi
-    variazione_percentuale = ((prices[-1] - prices[indice_acquisto]) / prices[indice_acquisto]) * 100
-
-    # Creazione del grafico
-    plt.plot(date, prices, label=f"{symbol} - Variazione: {variazione_percentuale:.2f}%")
-
-    # Segnalino per il giorno di acquisto
-    plt.scatter(date[indice_acquisto], prices[indice_acquisto], color='red', label='Acquisto')
-
-    # Aggiunta di etichette e titoli al grafico
-    plt.xlabel('Data')
-    plt.ylabel('Prezzo di Chiusura (USD)')
-    plt.title(f'Andamento di {symbol} dal {data_inizio.strftime("%Y-%m-%d")} a oggi')
-    plt.xticks(rotation=45)
-    plt.legend()
-
-    # Mostra il grafico
-    plt.show()
 
 
 def trend_e_variazione_percentuale(crypto_data_dict, symbol, num_giorni):
+    # Ottieni la data e l'ora correnti
+    current_datetime = datetime.now()
+
+    # Formatta la data e l'ora correnti con ore e minuti
+    formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M")
+
     # Estrai i dati storici della criptovaluta specificata dal dizionario
     if symbol in crypto_data_dict:
         df = crypto_data_dict.get(symbol)
@@ -377,7 +304,13 @@ def trend_e_variazione_percentuale(crypto_data_dict, symbol, num_giorni):
         return None, None
 
 
-def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_percentuale=1):
+def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_percentuale=2):
+    # Ottieni la data e l'ora correnti
+    current_datetime = datetime.now()
+
+    # Formatta la data e l'ora correnti con ore e minuti
+    formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M")
+
     # Estrai i dati OHLCV dalla criptovaluta specificata
     df = crypto_data_dict.get(symbol)
     if df is None:
@@ -392,7 +325,9 @@ def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_
 
     # Trova l'indice del minimo locale con uno sconto del 5%
     minimo_locale_index = None
-    for i in range(len(prices) - 1, 0, -1):
+    ultimi_giorni_da_non_contare = 2
+    for i in range(len(prices) - ultimi_giorni_da_non_contare, 0, -1):
+
         if (valore_attuale - prices[i]) / valore_attuale * 100 >= sconto_percentuale:
             minimo_locale_index = i
             break
@@ -457,7 +392,7 @@ def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_
 
 
         # Aggiungi il titolo al grafico con informazioni aggiuntive
-        plt.title(f'{symbol} value. Local minimum: {giorni_passati}g. Max module: {percentage:.2f}%')
+        plt.title(f'{formatted_datetime}: {rimuovi_USDT(symbol)}. Local minimum: {giorni_passati}g. Max module: {percentage:.2f}%')
 
         plt.xlabel('Date')
         plt.ylabel('Price (USD)')
@@ -472,15 +407,20 @@ def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_
         return giorni_passati, andamento, percentage
     else:
         return None  # Nessun minimo locale con sconto trovato
+
+
+def aggiungi_plusvalenza(plusvalenze, valore):
+    plusvalenze.append(valore)
+    return plusvalenze
 def aggiungi_crypto(portfolio, nome_crypto, data_acquisto, importo):
     key = (data_acquisto, nome_crypto)
     portfolio[key] = importo
-def reso_totale_per_criptovaluta(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
+def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
     total_invested = 0
     total_returns = 0
 
     string_acquisti = []
-    string_acquisti.append(f"{rimuovi_USDT(symbol)}:")
+
 
     for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
         if nome_crypto == symbol:
@@ -490,10 +430,14 @@ def reso_totale_per_criptovaluta(crypto_portfolio, crypto_data_dict, symbol, esp
             rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto, crypto_data_dict)
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
-            string_acquisti.append(f"{importo} USD: {rendimento:.2f}% [{data_acquisto}]")
+            string_acquisti.append(f"{rimuovi_USDT(symbol)}: {rendimento:.0f}% [{importo}$: {converti_formato_data(data_acquisto)}]")
 
     reso_totale_percentuale = (total_returns / total_invested) * 100
-    string_acquisti.append(f"Total: {reso_totale_percentuale:.2f}% ({total_returns:.2f}/{total_invested}USD)")
+
+
+    #string_acquisti.append(f"Total: {reso_totale_percentuale:.2f}% ({total_returns:.2f}/{total_invested}USD)")
+
+
     return reso_totale_percentuale, string_acquisti
 def get_crypto_percentage_change(symbol, start_date, crypto_data_dict, end_date=None):
     if symbol in crypto_data_dict:
@@ -549,6 +493,16 @@ def salva_portfolio(portfolio, file_path):
         with open(file_path, 'w') as f:
             json.dump(portfolio, f)
 
+def calcola_giorni_primo_acquisto(crypto_portfolio):
+    # Trova la data più vecchia nel portafoglio
+    data_acquisto_più_vecchia = min(
+        [datetime.strptime(data_acquisto, "%Y-%m-%d") for data_acquisto, _ in crypto_portfolio.keys()])
+
+    # Calcola la differenza di giorni tra la data più vecchia e la data odierna
+    oggi = datetime.now()
+    giorni_passati = (oggi - data_acquisto_più_vecchia).days
+    return giorni_passati
+
 def crypto_request():
 
 
@@ -557,15 +511,18 @@ def crypto_request():
     crypto_portfolio = {}
 
     # Esempio di utilizzo
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 200)
+    aggiungi_crypto(crypto_portfolio, 'BNB/USDT', '2024-02-27', 65)
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 100)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 18)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 160)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-06-09', 50)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2023-12-15', 20)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-11-10', 10)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-02-23', 150)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2023-12-15', 20)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 160)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-02-28', 204)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-02', 25)
+
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2023-12-20', 10)
@@ -578,6 +535,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
     aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-02-07', 20)
     aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
+    aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2024-02-24', 11)
     aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
     aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-05-30', 8)
     aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-11-01', 20)
@@ -585,45 +543,61 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2023-12-16', 12)
     aggiungi_crypto(crypto_portfolio, 'JTO/USDT', '2023-12-16', 11)
     aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-01-10', 2)
-    aggiungi_crypto(crypto_portfolio, 'MDX/USDT', '2023-12-12', 2)
+    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-03-04', 25)
+
     aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-02-20', 8)
     aggiungi_crypto(crypto_portfolio, 'AGIX/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-20', 10)
+    aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-27', 18)
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-20', 10)
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-29', 53)
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 25)
+
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-23', 10)
     aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-20', 10)
+    aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-28', 23)
     aggiungi_crypto(crypto_portfolio, 'NMR/USDT', '2024-02-21', 10)
+    aggiungi_crypto(crypto_portfolio, 'NMR/USDT', '2024-02-27', 28)
     aggiungi_crypto(crypto_portfolio, 'HBAR/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'HBAR/USDT', '2024-02-23', 10)
     aggiungi_crypto(crypto_portfolio, 'FET/USDT', '2024-02-20', 18)
     aggiungi_crypto(crypto_portfolio, 'GALA/USDT', '2024-02-23', 20)
-    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-02-23', 10)
+
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-23', 35)
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-24', 50)
+    aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-04', 31)
     aggiungi_crypto(crypto_portfolio, 'XRP/USDT', '2024-02-23', 20)
     aggiungi_crypto(crypto_portfolio, 'AI/USDT', '2024-02-23', 25)
     aggiungi_crypto(crypto_portfolio, 'RNDR/USDT', '2024-02-23', 30)
     aggiungi_crypto(crypto_portfolio, 'LUNC/USDT', '2024-02-23', 5)
     aggiungi_crypto(crypto_portfolio, 'AVAX/USDT', '2024-02-23', 15)
     aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-23', 10)
-    aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-24', 10)
+    aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-24', 20)
     aggiungi_crypto(crypto_portfolio, 'ARB/USDT', '2024-02-23', 20)
-    aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2024-02-23', 11)
+    aggiungi_crypto(crypto_portfolio, 'ICP/USDT', '2024-02-26', 25)
+    aggiungi_crypto(crypto_portfolio, 'PIXEL/USDT', '2024-02-26', 30)
+    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-03-03', 15)
+    aggiungi_crypto(crypto_portfolio, 'ROSE/USDT', '2024-03-04', 75)
 
+    giorni_acquisto_più_vecchio = calcola_giorni_primo_acquisto(crypto_portfolio)
+
+    plusvalenze = []
+    PEPE = 15
+    PEPE_DATA = ('PEPE/USDT', '2024-02-23', '2024-03-02', 10) #25
+    plusvalenze = aggiungi_plusvalenza(plusvalenze, PEPE)
 
 
     # Estrai tutti i nomi unici di criptovalute
     # Estrai tutti i nomi unici di criptovalute
     symbols = list(set([key[1] for key in crypto_portfolio.keys()]))
     symbols.sort()
-    print(symbols)
 
 
     exchange = ccxt.binance()
 
     # Crea il dizionario dei dati delle criptovalute
-    crypto_data_dict = create_cryptocurrency_data_dict(exchange, symbols)
+    crypto_data_dict = create_cryptocurrency_data_dict(exchange, symbols, giorni_acquisto_più_vecchio + 10 )
 
 
     crypto_set = set()
@@ -641,7 +615,6 @@ def crypto_request():
 
     ##print("Criptovalute nel portafoglio:")
     for nome_crypto in symbols:
-        print(nome_crypto)
 
         #print("1 ",nome_crypto)
         try:
@@ -680,7 +653,8 @@ def crypto_request():
         #string.append(f"{num_giorni_2} giorni: {nome_crypto} in {trend_2} del {variazione_percentuale_2:.2f}%.")
         crypto_set.add(nome_crypto)
 
-        a, string_acquisti = reso_totale_per_criptovaluta(crypto_portfolio,crypto_data_dict,nome_crypto)
+        a, string_acquisti = valutatore_singoli_investimenti(crypto_portfolio,crypto_data_dict,nome_crypto)
+
         string_all_buyed_asset.extend(string_acquisti)
 
 
@@ -688,15 +662,16 @@ def crypto_request():
     for crypto, value in dict_minimi.items():
         # Stampo la stringa e il valore associato
         values = dict_short_value[crypto]
-        defi_string.append(f"{rimuovi_USDT(crypto)}:{value}g |{dict_perc[crypto]:.1f}%|({dict_andam[crypto]}) |{values[0]:.1f}%|{values[1]:.1f}%|{values[2]:.1f}%|")
+        defi_string.append(f"{rimuovi_USDT(crypto)}:{value}g [{dict_perc[crypto]:.1f}%]({dict_andam[crypto]})|{values[0]:.1f}%|{values[1]:.1f}%|{values[2]:.1f}%|")
 
     defi_string = sorted(defi_string, key=custom_sort_key, reverse=True)
     defi_string.insert(0, "LOCAL MIN | MODULE | TRENDS, ")
     defi_string.insert(0,"CRIPTOVALUTE: " + str(today))
 
-    total = reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict)
+    total = reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict,plusvalenze)
     defi_string.append(total[0])
     defi_string.append("end_simple")
+    string_all_buyed_asset = sorted(string_all_buyed_asset, key=custom_sort_key, reverse=False)
     defi_string.extend(string_all_buyed_asset)
 
 
@@ -708,21 +683,35 @@ def crypto_request():
 
     return defi_string
 
+
+delete_file(FILEPATH_DATI)
+# #salva file con dati di oggi, se gia ci sono skippa
+controlla_file()
 #
-# delete_file(FILEPATH_DATI)
-# # #salva file con dati di oggi, se gia ci sono skippa
-# controlla_file()
-# #
-# # # print(defi_string)
-# crypto_string = leggi_stringa_oggi()
-# # print(crypto_string)
+# # print(defi_string)
+crypto_string = leggi_stringa_oggi()
+# print(crypto_string)
+
+
+# crypto_string = crypto_request()
 #
+# plot_andamento_cripto(nome_crypto, crypto_portfolio)
+
+
 #
-# # crypto_string = crypto_request()
-# #
 # for info in crypto_string:
 #     info_c = converti_formato_data(info)
 #     if info_c == "end_simple":
 #         break
 #     else:
 #         print(info_c)
+#
+# # MOVERS
+# pr = 0
+# for info in crypto_string:
+#     info_c = converti_formato_data(info)
+#     if info_c == "end_simple":
+#         pr = 1
+#     if pr == 1:
+#         print(info_c)
+
