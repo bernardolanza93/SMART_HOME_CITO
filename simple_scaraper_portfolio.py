@@ -544,6 +544,8 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'JTO/USDT', '2023-12-16', 11)
     aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-01-10', 2)
     aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-03-04', 25)
+    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-03-05', 24)
+
 
     aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-02-20', 8)
     aggiungi_crypto(crypto_portfolio, 'AGIX/USDT', '2024-02-20', 10)
@@ -575,6 +577,9 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'AVAX/USDT', '2024-02-23', 15)
     aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-23', 10)
     aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-24', 20)
+    aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-03-05', 24)
+
+
     aggiungi_crypto(crypto_portfolio, 'ARB/USDT', '2024-02-23', 20)
     aggiungi_crypto(crypto_portfolio, 'ICP/USDT', '2024-02-26', 25)
     aggiungi_crypto(crypto_portfolio, 'PIXEL/USDT', '2024-02-26', 30)

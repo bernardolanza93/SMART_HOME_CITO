@@ -331,7 +331,7 @@ def on_callback_query(msg):
         # Formatta la data e l'ora correnti con ore e minuti
         formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M")
 
-        bot.sendMessage(chat_id, str(formatted_datetime) + ' DATA')
+        bot.sendMessage(chat_id, "AL GIORNO " + str(formatted_datetime))
         crypto_string = leggi_stringa_oggi()
 
         # plot_andamento_cripto(nome_crypto, crypto_portfolio)
