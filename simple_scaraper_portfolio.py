@@ -515,6 +515,8 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 100)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 18)
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2024-03-05', 100)
+
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-06-09', 50)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-11-10', 10)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2023-12-15', 20)
@@ -522,6 +524,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-02-28', 204)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-02', 25)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-05', 100)
 
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)
@@ -540,6 +543,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-05-30', 8)
     aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-11-01', 20)
     aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2023-04-19', 8)
+    aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2024-03-05', 50)
     aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2023-12-16', 12)
     aggiungi_crypto(crypto_portfolio, 'JTO/USDT', '2023-12-16', 11)
     aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-01-10', 2)
@@ -672,11 +676,19 @@ def crypto_request():
 
     defi_string = sorted(defi_string, key=custom_sort_key, reverse=True)
     defi_string.insert(0, "LOCAL MIN | MODULE | TRENDS, ")
-    defi_string.insert(0,"CRIPTOVALUTE: " + str(today))
+    # Ottieni la data e l'ora correnti
+    current_datetime = datetime.now()
+
+    # Formatta la data e l'ora correnti con ore e minuti
+
+    exact_time = current_datetime.strftime("%Y-%m-%d %H:%M")
+    defi_string.insert(0,"CRIPTOVALUTE: " + str(exact_time))
 
     total = reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict,plusvalenze)
     defi_string.append(total[0])
     defi_string.append("end_simple")
+    defi_string.insert(0,"MOVES: " + str(exact_time))
+
     string_all_buyed_asset = sorted(string_all_buyed_asset, key=custom_sort_key, reverse=False)
     defi_string.extend(string_all_buyed_asset)
 
@@ -700,24 +712,24 @@ crypto_string = leggi_stringa_oggi()
 
 
 # crypto_string = crypto_request()
-#
-# plot_andamento_cripto(nome_crypto, crypto_portfolio)
 
 
-#
-# for info in crypto_string:
-#     info_c = converti_formato_data(info)
-#     if info_c == "end_simple":
-#         break
-#     else:
-#         print(info_c)
-#
-# # MOVERS
-# pr = 0
-# for info in crypto_string:
-#     info_c = converti_formato_data(info)
-#     if info_c == "end_simple":
-#         pr = 1
-#     if pr == 1:
-#         print(info_c)
+
+
+
+for info in crypto_string:
+    info_c = converti_formato_data(info)
+    if info_c == "end_simple":
+        break
+    else:
+        print(info_c)
+
+# MOVERS
+pr = 0
+for info in crypto_string:
+    info_c = converti_formato_data(info)
+    if info_c == "end_simple":
+        pr = 1
+    if pr == 1:
+        print(info_c)
 
