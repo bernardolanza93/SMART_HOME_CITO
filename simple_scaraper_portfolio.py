@@ -559,6 +559,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-29', 53)
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 25)
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 100)
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-08', 51)
 
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-23', 10)
@@ -574,6 +575,7 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-23', 35)
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-24', 50)
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-04', 31)
+    aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-08', 45)
     aggiungi_crypto(crypto_portfolio, 'XRP/USDT', '2024-02-23', 20)
     aggiungi_crypto(crypto_portfolio, 'AI/USDT', '2024-02-23', 25)
     aggiungi_crypto(crypto_portfolio, 'RNDR/USDT', '2024-02-23', 30)
@@ -589,8 +591,10 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'PIXEL/USDT', '2024-02-26', 30)
     aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-03-03', 15)
     aggiungi_crypto(crypto_portfolio, 'ROSE/USDT', '2024-03-04', 75)
+    aggiungi_crypto(crypto_portfolio, 'GRT/USDT', '2024-03-06', 48)
 
-    giorni_acquisto_più_vecchio = calcola_giorni_primo_acquisto(crypto_portfolio)
+
+    giorni_acquisto_piu_vecchio = calcola_giorni_primo_acquisto(crypto_portfolio)
 
     plusvalenze = []
     PEPE = 15
@@ -607,7 +611,7 @@ def crypto_request():
     exchange = ccxt.binance()
 
     # Crea il dizionario dei dati delle criptovalute
-    crypto_data_dict = create_cryptocurrency_data_dict(exchange, symbols, giorni_acquisto_più_vecchio + 10 )
+    crypto_data_dict = create_cryptocurrency_data_dict(exchange, symbols, giorni_acquisto_piu_vecchio + 10 )
 
 
     crypto_set = set()
@@ -717,19 +721,19 @@ crypto_string = leggi_stringa_oggi()
 
 
 
-for info in crypto_string:
-    info_c = converti_formato_data(info)
-    if info_c == "end_simple":
-        break
-    else:
-        print(info_c)
-
-# MOVERS
-pr = 0
-for info in crypto_string:
-    info_c = converti_formato_data(info)
-    if info_c == "end_simple":
-        pr = 1
-    if pr == 1:
-        print(info_c)
-
+# for info in crypto_string:
+#     info_c = converti_formato_data(info)
+#     if info_c == "end_simple":
+#         break
+#     else:
+#         print(info_c)
+#
+# # MOVERS
+# pr = 0
+# for info in crypto_string:
+#     info_c = converti_formato_data(info)
+#     if info_c == "end_simple":
+#         pr = 1
+#     if pr == 1:
+#         print(info_c)
+#
