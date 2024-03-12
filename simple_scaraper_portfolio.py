@@ -540,6 +540,9 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
     aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2024-02-24', 11)
     aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
+    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2024-03-12', 25)
+    aggiungi_crypto(crypto_portfolio, 'DOT/USDT', '2024-03-12', 70)
+    aggiungi_crypto(crypto_portfolio, 'UNI/USDT', '2024-03-12', 50)
     aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-05-30', 8)
     aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-11-01', 20)
     aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2023-04-19', 8)
@@ -563,6 +566,7 @@ def crypto_request():
 
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-23', 10)
+    aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-03-12', 25)
     aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-28', 23)
     aggiungi_crypto(crypto_portfolio, 'NMR/USDT', '2024-02-21', 10)
