@@ -723,8 +723,8 @@ crypto_string = leggi_stringa_oggi()
 
 
 
-
-
+#
+#
 # for info in crypto_string:
 #     info_c = converti_formato_data(info)
 #     if info_c == "end_simple":
