@@ -555,6 +555,7 @@ def crypto_request():
 
 
     aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-02-20', 8)
+    aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-03-14', 46)
     aggiungi_crypto(crypto_portfolio, 'AGIX/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-20', 10)
     aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-27', 18)
