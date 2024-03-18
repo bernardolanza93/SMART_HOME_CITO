@@ -191,8 +191,6 @@ def write_data_csv(bot):
 
             initial_symbols = current_symbols
 
-
-
                 # Aumenta il contatore ad ogni iterazione del ciclo
 
         # Get the current time

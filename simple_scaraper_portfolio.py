@@ -24,6 +24,58 @@ def get_binance_symbols():
         print(f"Si è verificato un errore durante il recupero dei simboli da Binance: {e}")
         return None
 
+
+def save_symbols_to_file(symbols, filename):
+    if symbols is not None:
+        with open(filename, 'w') as file:
+
+            for symbol in symbols:
+                file.write(symbol + '\n')
+
+
+
+
+def load_symbols_from_file(filename):
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
+            symbols = [line.strip() for line in file.readlines()]
+            return symbols
+    else:
+        return []
+
+
+def check_for_new_symbols(filename):
+
+    initial_symbols = load_symbols_from_file(filename)
+
+    if not initial_symbols:
+        initial_symbols = get_binance_symbols()
+        save_symbols_to_file(initial_symbols, filename)
+
+    if initial_symbols is not None:
+
+
+        current_symbols = get_binance_symbols()
+
+        # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
+        new_symbols = set(current_symbols) - set(initial_symbols)
+        symbol_string = []
+
+        if new_symbols:
+            print("Nuove criptovalute quotate su Binance:")
+            i = 0
+            for symbol in new_symbols:
+                i = i+1
+                symbol_string.append(str(i)+":"+ symbol)
+
+            # Puoi inviare notifiche o eseguire altre azioni di avviso qui
+        else:
+            print("Nessuna nuova criptovaluta trovata.")
+    else:
+        symbol_string = "no data"
+
+    return symbol_string
+
 def image_inspector(filepath):
     # Lista per salvare le prime parti dei nomi dei file
     crypto_names = []
@@ -288,6 +340,7 @@ def salva_stringa(lista_stringhe):
 
 
 def trend_e_variazione_percentuale(crypto_data_dict, symbol, num_giorni):
+
     # Ottieni la data e l'ora correnti
     current_datetime = datetime.now()
 
@@ -304,16 +357,22 @@ def trend_e_variazione_percentuale(crypto_data_dict, symbol, num_giorni):
         # Estrai il prezzo di chiusura per ogni giorno
         prices = df['close'].tolist()
 
-        # Calcola il trend degli ultimi N giorni
-        trend = "++" if prices[-1] > prices[-num_giorni] else "--"
+        if len(prices) > num_giorni+1:
 
-        # Calcola la variazione percentuale degli ultimi N giorni
-        variazione_percentuale = ((prices[-1] - prices[-num_giorni]) / prices[-num_giorni]) * 100
+            # Calcola il trend degli ultimi N giorni
+            trend = "++" if prices[-1] > prices[-num_giorni] else "--"
+
+            # Calcola la variazione percentuale degli ultimi N giorni
+            variazione_percentuale = ((prices[-1] - prices[-num_giorni]) / prices[-num_giorni]) * 100
+        else:
+            trend = "++"
+            variazione_percentuale = 0
 
         return trend, variazione_percentuale
     else:
         print(f"Il simbolo '{symbol}' non è presente nel dizionario crypto_data_dict.")
         return None, None
+
 
 
 def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_percentuale=2):
@@ -332,93 +391,98 @@ def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_
     # Estrai il prezzo di chiusura per ogni giorno
     prices = df['close'].astype(float).tolist()
 
-    # Calcola il valore attuale della criptovaluta
-    valore_attuale = prices[-1]
+    if len(prices) > 8:
 
-    # Trova l'indice del minimo locale con uno sconto del 5%
-    minimo_locale_index = None
-    ultimi_giorni_da_non_contare = 2
-    for i in range(len(prices) - ultimi_giorni_da_non_contare, 0, -1):
+        # Calcola il valore attuale della criptovaluta
+        valore_attuale = prices[-1]
 
-        if (valore_attuale - prices[i]) / valore_attuale * 100 >= sconto_percentuale:
-            minimo_locale_index = i
-            break
+        # Trova l'indice del minimo locale con uno sconto del 5%
+        minimo_locale_index = None
+        ultimi_giorni_da_non_contare = 2
+        for i in range(len(prices) - ultimi_giorni_da_non_contare, 0, -1):
 
-    if minimo_locale_index is not None:
-        # Calcola il numero di giorni passati dal minimo locale con sconto
-        giorni_passati = len(prices) - minimo_locale_index - 1
+            if (valore_attuale - prices[i]) / valore_attuale * 100 >= sconto_percentuale:
+                minimo_locale_index = i
+                break
 
-        # Calcola il massimo valore tra oggi e il minimo locale
-        # Estrai il massimo valore dei prezzi dalla lista dei prezzi dal minimo locale fino alla fine
-        max_price = max(prices[minimo_locale_index:])
+        if minimo_locale_index is not None:
+            # Calcola il numero di giorni passati dal minimo locale con sconto
+            giorni_passati = len(prices) - minimo_locale_index - 1
 
-        # Prendi il prezzo di chiusura degli ultimi due giorni
-        ultimo_prezzo = prices[-1]
-        penultimo_prezzo = prices[-2]
+            # Calcola il massimo valore tra oggi e il minimo locale
+            # Estrai il massimo valore dei prezzi dalla lista dei prezzi dal minimo locale fino alla fine
+            max_price = max(prices[minimo_locale_index:])
 
-        # Calcola l'andamento
-        if ultimo_prezzo > penultimo_prezzo:
-            andamento = "+"
-        elif ultimo_prezzo < penultimo_prezzo:
-            andamento = "-"
-        else:
-            andamento = "="
+            # Prendi il prezzo di chiusura degli ultimi due giorni
+            ultimo_prezzo = prices[-1]
+            penultimo_prezzo = prices[-2]
 
-
-
-
-
-        # Plot dei dati relativi al periodo dell'ultimo minimo locale
-        min_date = df.index[minimo_locale_index]
-        max_index = prices.index(max(prices[minimo_locale_index:]))
-        data_massimo_locale = df.index[max_index]
-        oggi = df.index[-1]
-
-        min_price = prices[minimo_locale_index]
-
-        percentage = abs(max_price - valore_attuale) / valore_attuale * 100
-
-        today = datetime.now()
-
-        plt.figure(figsize=(12, 3))
-
-        if giorni_passati < 30:
-            # Se il minimo locale è meno di 30 giorni fa, plotta solo gli ultimi 30 giorni
-            plt.plot(df.index[-30:], df['close'][-30:], label='Price')
-        else:
-            # Altrimenti, plotta dal minimo locale fino alla fine dei dati disponibili
-            plt.plot(df.index[minimo_locale_index:], df['close'][minimo_locale_index:], label='Price')
-
-        # Aggiungi un punto sul grafico per indicare il minimo locale
-        plt.scatter(min_date, min_price, color='red', label='Local Min')
-
-
-        if giorni_passati > 3:
-            plt.plot([data_massimo_locale, data_massimo_locale], [max_price, valore_attuale], color='green', linestyle='dashed', linewidth=1)
-
-            plt.plot([data_massimo_locale, oggi], [valore_attuale, valore_attuale], color='green', linestyle='dashed', linewidth=1)
-            plt.scatter(data_massimo_locale, max_price, color='black')
-            plt.scatter(data_massimo_locale, valore_attuale, color='black')
-            plt.scatter(oggi, valore_attuale, color='black')
+            # Calcola l'andamento
+            if ultimo_prezzo > penultimo_prezzo:
+                andamento = "+"
+            elif ultimo_prezzo < penultimo_prezzo:
+                andamento = "-"
+            else:
+                andamento = "="
 
 
 
-        # Aggiungi il titolo al grafico con informazioni aggiuntive
-        plt.title(f'{formatted_datetime}: {rimuovi_USDT(symbol)}. Local minimum: {giorni_passati}g. Max module: {percentage:.2f}%')
 
-        plt.xlabel('Date')
-        plt.ylabel('Price (USD)')
-        plt.legend()
-        plt.grid(True)
-        plt.tight_layout()
 
-        # Salva il grafico con il nome della criptovaluta
-        plt.savefig(FOLDER_GRAPH + f'/{rimuovi_USDT(symbol)}_price_plot.png')
-        plt.close()
+            # Plot dei dati relativi al periodo dell'ultimo minimo locale
+            min_date = df.index[minimo_locale_index]
+            max_index = prices.index(max(prices[minimo_locale_index:]))
+            data_massimo_locale = df.index[max_index]
+            oggi = df.index[-1]
 
-        return giorni_passati, andamento, percentage
+            min_price = prices[minimo_locale_index]
+
+            percentage = abs(max_price - valore_attuale) / valore_attuale * 100
+
+            today = datetime.now()
+
+            plt.figure(figsize=(12, 3))
+
+            if giorni_passati < 30:
+                # Se il minimo locale è meno di 30 giorni fa, plotta solo gli ultimi 30 giorni
+                plt.plot(df.index[-30:], df['close'][-30:], label='Price')
+            else:
+                # Altrimenti, plotta dal minimo locale fino alla fine dei dati disponibili
+                plt.plot(df.index[minimo_locale_index:], df['close'][minimo_locale_index:], label='Price')
+
+            # Aggiungi un punto sul grafico per indicare il minimo locale
+            plt.scatter(min_date, min_price, color='red', label='Local Min')
+
+
+            if giorni_passati > 3:
+                plt.plot([data_massimo_locale, data_massimo_locale], [max_price, valore_attuale], color='green', linestyle='dashed', linewidth=1)
+
+                plt.plot([data_massimo_locale, oggi], [valore_attuale, valore_attuale], color='green', linestyle='dashed', linewidth=1)
+                plt.scatter(data_massimo_locale, max_price, color='black')
+                plt.scatter(data_massimo_locale, valore_attuale, color='black')
+                plt.scatter(oggi, valore_attuale, color='black')
+
+
+
+            # Aggiungi il titolo al grafico con informazioni aggiuntive
+            plt.title(f'{formatted_datetime}: {rimuovi_USDT(symbol)}. Local minimum: {giorni_passati}g. Max module: {percentage:.2f}%')
+
+            plt.xlabel('Date')
+            plt.ylabel('Price (USD)')
+            plt.legend()
+            plt.grid(True)
+            plt.tight_layout()
+
+            # Salva il grafico con il nome della criptovaluta
+            plt.savefig(FOLDER_GRAPH + f'/{rimuovi_USDT(symbol)}_price_plot.png')
+            plt.close()
+
+            return giorni_passati, andamento, percentage
     else:
-        return None  # Nessun minimo locale con sconto trovato
+
+        return 1, "=", 0
+
+
 
 
 def aggiungi_plusvalenza(plusvalenze, valore):
@@ -520,6 +584,8 @@ def crypto_request():
 
 
 
+
+
     crypto_portfolio = {}
 
     # Esempio di utilizzo
@@ -606,6 +672,7 @@ def crypto_request():
 
 
     aggiungi_crypto(crypto_portfolio, 'ARB/USDT', '2024-02-23', 20)
+    aggiungi_crypto(crypto_portfolio, 'ARB/USDT', '2024-03-18', 50)
     aggiungi_crypto(crypto_portfolio, 'ICP/USDT', '2024-02-26', 25)
     aggiungi_crypto(crypto_portfolio, 'PIXEL/USDT', '2024-02-26', 30)
     aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-03-03', 15)
@@ -653,9 +720,9 @@ def crypto_request():
         try:
             giorni_passati, andamento_ld, percentage_max = giorni_passati_da_minimo_locale_con_sconto(nome_crypto, crypto_data_dict)
         except Exception as e:
-            print("error",e)
+            print("error giorni_passati_da_minimo_locale_con_sconto",e)
             print(nome_crypto)
-            print(crypto_data_dict)
+            print(crypto_data_dict.get(nome_crypto))
         if giorni_passati is not None:
             #string.append(f"MINIMO LOCALE {nome_crypto}:  {giorni_passati} giorni fa.")
             dict_minimi[nome_crypto] = giorni_passati
@@ -672,8 +739,7 @@ def crypto_request():
 
 
 
-        ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
-        #string.append(f"{num_giorni_5} giorni: {nome_crypto} {trend_5} {variazione_percentuale_5:.2f}%.")
+
         num_giorni_2 = 2
         trend_2, variazione_percentuale_2 = trend_e_variazione_percentuale(crypto_data_dict, nome_crypto, num_giorni_2)
         num_giorni_4 = 4
@@ -682,8 +748,7 @@ def crypto_request():
         trend_8, variazione_percentuale_8 = trend_e_variazione_percentuale(crypto_data_dict,nome_crypto, num_giorni_8)
         dict_short_value[nome_crypto] = (variazione_percentuale_2, variazione_percentuale_4, variazione_percentuale_8)
 
-        ##print(f"{num_giorni} giorni: {nome_crypto} in {trend} del {variazione_percentuale:.2f}%.")
-        #string.append(f"{num_giorni_2} giorni: {nome_crypto} in {trend_2} del {variazione_percentuale_2:.2f}%.")
+
         crypto_set.add(nome_crypto)
 
         a, string_acquisti = valutatore_singoli_investimenti(crypto_portfolio,crypto_data_dict,nome_crypto)
@@ -699,6 +764,14 @@ def crypto_request():
 
     defi_string = sorted(defi_string, key=custom_sort_key, reverse=True)
     defi_string.insert(0, "LOCAL MIN | MODULE | TRENDS, ")
+
+
+
+    filname = "symbol_binance.txt"
+    new_symbol_binance = check_for_new_symbols(filname)
+    defi_string.append("NEW CRYPTO: "+str(new_symbol_binance))
+
+
     # Ottieni la data e l'ora correnti
     current_datetime = datetime.now()
 
@@ -724,21 +797,17 @@ def crypto_request():
 
     return defi_string
 
-
-delete_file(FILEPATH_DATI)
-# #salva file con dati di oggi, se gia ci sono skippa
-controlla_file()
 #
-# # print(defi_string)
-crypto_string = leggi_stringa_oggi()
-# print(crypto_string)
-
-
-# crypto_string = crypto_request()
-
-
-
+# delete_file(FILEPATH_DATI)
+# # #salva file con dati di oggi, se gia ci sono skippa
+# controlla_file()
+# #
+# # # print(defi_string)
+# crypto_string = leggi_stringa_oggi()
+# # print(crypto_string)
 #
+#
+# # crypto_string = crypto_request()
 #
 # for info in crypto_string:
 #     info_c = converti_formato_data(info)
@@ -755,4 +824,4 @@ crypto_string = leggi_stringa_oggi()
 #         pr = 1
 #     if pr == 1:
 #         print(info_c)
-#
+
