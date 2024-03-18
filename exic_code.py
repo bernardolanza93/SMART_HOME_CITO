@@ -185,8 +185,13 @@ def write_data_csv(bot):
 
         if new_symbols:
             bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
+
             for symbol in new_symbols:
                 bot.sendMessage(bernardo_chat_id, symbol)
+
+            initial_symbols = current_symbols
+
+
 
                 # Aumenta il contatore ad ogni iterazione del ciclo
 
