@@ -12,6 +12,18 @@ import pandas as pd
 import re
 
 
+def get_binance_symbols():
+    # Crea un'istanza del modulo di scambio Binance
+    exchange = ccxt.binance()
+
+    try:
+        # Ottieni tutti i simboli (coppie di trading) disponibili su Binance
+        symbols = exchange.symbols
+        return symbols
+    except Exception as e:
+        print(f"Si è verificato un errore durante il recupero dei simboli da Binance: {e}")
+        return None
+
 def image_inspector(filepath):
     # Lista per salvare le prime parti dei nomi dei file
     crypto_names = []
@@ -511,7 +523,7 @@ def crypto_request():
     crypto_portfolio = {}
 
     # Esempio di utilizzo
-    aggiungi_crypto(crypto_portfolio, 'BNB/USDT', '2024-02-27', 65)
+    aggiungi_crypto(crypto_portfolio, 'BNB/USDT', '2024-02-27', 55)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 100)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 18)
@@ -525,6 +537,8 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-02-28', 204)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-02', 25)
     aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-05', 100)
+
+    aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-03-16', 5)
 
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)

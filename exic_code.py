@@ -170,6 +170,8 @@ def make_graph():
     #The simplest way is to start the ntetwork loop on a separate thread using the client.loop_start() function, then use the normal client.publish method
 
 
+
+
 def write_data_csv():
     
     while True:
@@ -374,15 +376,37 @@ def on_callback_query(msg):
 
 
 def bot_ini(bot):
+    initial_symbols = get_binance_symbols()
 
     MessageLoop(bot, {'chat': on_chat_message,
       'callback_query': on_callback_query}).run_as_thread()
     print("||_||_ CHECK BOT ONLINE")
+
+    bot.sendMessage(bernardo_chat_id, "TRADER BOT READY")
+
+    check_interval = 10  # Controlla ogni 10 cicli
+    counter = 0
+
+
     while True:
         sleep(2)
 
-        print(".",end='')
-    
+        if counter % check_interval == 0:
+
+            current_symbols = get_binance_symbols()
+
+            # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
+            new_symbols = set(current_symbols) - set(initial_symbols)
+
+            if new_symbols:
+                bot.sendMessage(bernardo_chat_id,  "NEW CRYPTO:")
+                for symbol in new_symbols:
+                    bot.sendMessage(bernardo_chat_id,symbol)
+
+                    # Aumenta il contatore ad ogni iterazione del ciclo
+
+        counter += 1
+
 
 
 now = datetime.now()
