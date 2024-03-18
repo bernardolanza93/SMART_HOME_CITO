@@ -172,16 +172,31 @@ def make_graph():
 
 
 
-def write_data_csv():
-    
+def write_data_csv(bot):
+    bot.sendMessage(bernardo_chat_id, "TRADER BOT READY")
+    initial_symbols = get_binance_symbols()
+
     while True:
+
+        current_symbols = get_binance_symbols()
+
+        # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
+        new_symbols = set(current_symbols) - set(initial_symbols)
+
+        if new_symbols:
+            bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
+            for symbol in new_symbols:
+                bot.sendMessage(bernardo_chat_id, symbol)
+
+                # Aumenta il contatore ad ogni iterazione del ciclo
+
         # Get the current time
         current_time = datetime.now().time()
 
         # Check if it's after 8 AM
         if current_time.hour >= 8:
             controlla_file()
-        time.sleep(10)
+        time.sleep(20)
         
 
 #plt.show()
@@ -376,36 +391,14 @@ def on_callback_query(msg):
 
 
 def bot_ini(bot):
-    initial_symbols = get_binance_symbols()
+
 
     MessageLoop(bot, {'chat': on_chat_message,
       'callback_query': on_callback_query}).run_as_thread()
     print("||_||_ CHECK BOT ONLINE")
 
-    bot.sendMessage(bernardo_chat_id, "TRADER BOT READY")
-
-    check_interval = 10  # Controlla ogni 10 cicli
-    counter = 0
-
-
     while True:
         sleep(2)
-
-        if counter % check_interval == 0:
-
-            current_symbols = get_binance_symbols()
-
-            # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
-            new_symbols = set(current_symbols) - set(initial_symbols)
-
-            if new_symbols:
-                bot.sendMessage(bernardo_chat_id,  "NEW CRYPTO:")
-                for symbol in new_symbols:
-                    bot.sendMessage(bernardo_chat_id,symbol)
-
-                    # Aumenta il contatore ad ogni iterazione del ciclo
-
-        counter += 1
 
 
 
@@ -441,7 +434,7 @@ print("||_||_ CHECK PROCESSES")
 p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_from_tcp_ID,))
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
 p3_ri = multiprocessing.Process(target=reciver.main)
-p_sensor = multiprocessing.Process(target=write_data_csv)
+p_sensor = multiprocessing.Process(target=write_data_csv,args = (bot,))
 
 
 try:
