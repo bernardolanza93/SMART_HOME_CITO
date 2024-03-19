@@ -11,6 +11,112 @@ import subprocess
 import pandas as pd
 import re
 
+def calculate_cumulative_percentage_change(prices):
+    cumulative_percentage = [0]  # Inizializza con il primo giorno a 0%
+    for i in range(1, len(prices)):
+        percentage_change = ((prices[i] - prices[i-1]) / prices[i-1]) * 100
+        cumulative_percentage.append(cumulative_percentage[-1] + percentage_change)
+    return cumulative_percentage
+
+
+
+
+def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
+    # Trova la data del primo acquisto
+    first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
+
+    # Trova la data attuale
+    current_date = datetime.now()
+
+    # Calcola tutti i giorni tra la data del primo acquisto e la data attuale
+    days_since_first_purchase = [(current_date - first_purchase_date - timedelta(days=i)).days for i in range((current_date - first_purchase_date).days)]
+
+    # Assicurati che la lunghezza di portfolio_variation sia uguale a quella di days_since_first_purchase
+    days_since_first_purchase.append(0)
+
+
+    # Inverti le date e il rendimento percentuale cumulativo
+
+    bitcoin_prices = crypto_data_dict.get('BTC/USDT', {}).get('close', [])
+    # Se ci sono dati disponibili per Bitcoin
+    length_difference = len(bitcoin_prices) - len(days_since_first_purchase)
+    if length_difference > 0:
+        # Se la lunghezza di days_since_first_purchase è maggiore, taglia i primi elementi dei prezzi di Bitcoin
+        bitcoin_prices = bitcoin_prices[length_difference:]
+
+    bitcoin_cumulative_percentage = calculate_cumulative_percentage_change(bitcoin_prices)
+
+    days_since_first_purchase.reverse()
+    date_labels = [(first_purchase_date + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(len(days_since_first_purchase))]
+
+    #portfolio_variation.reverse()
+    plt.figure(figsize=(24, 6))
+    # Plot della variazione percentuale rispetto alle date dal primo acquisto a oggi
+    plt.plot(date_labels, portfolio_variation, label='Portfolio %')
+    plt.plot(date_labels, bitcoin_cumulative_percentage, label='Bitcoin')
+    # Aggiungi etichette agli assi e una legenda
+    plt.xlabel('Data del primo acquisto fino ad oggi')
+    plt.ylabel('Variazione Percentuale Cumulativa')
+    plt.legend()
+    plt.xticks(range(0, len(date_labels), 30), date_labels[::30], rotation=45)
+
+    # Mostra il grafico
+    plt.savefig(FOLDER_GRAPH + f'/ALL_price_plot.png')
+
+
+
+
+def reso_totale_per_portafoglio_tempo(crypto_portfolio, crypto_data_dict, plusvalenze):
+
+    # Somma delle plusvalenze
+    total_plusvalenze = sum(plusvalenze)
+
+    string_acquisti = []
+    reso_percentuale_cumulativo = []
+
+    # Estrai le date degli acquisti
+    purchase_dates = [pd.to_datetime(date) for date, _ in crypto_portfolio.keys()]
+
+    # Trova la data del primo acquisto
+    first_purchase_date = min(purchase_dates).date()
+
+    # Ciclo attraverso tutte le date da first_purchase_date fino ad oggi
+    current_date = datetime.now().date()
+    delta = timedelta(days=1)
+    while first_purchase_date <= current_date:
+        # Calcola la data in formato stringa
+        current_date_str = first_purchase_date.strftime("%Y-%m-%d")
+
+        # Calcola il rendimento percentuale dal primo acquisto a current_date
+        total_invested = 0
+        total_returns = 0
+        for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
+            if pd.to_datetime(data_acquisto).date() <= first_purchase_date:
+                # Calcola il rendimento percentuale parziale dal primo acquisto a current_date per ogni crypto
+                rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto, crypto_data_dict, current_date_str)
+                if rendimento is not None:
+                    reso_acquisto = importo * rendimento / 100
+
+                    total_returns += reso_acquisto
+                    total_invested += importo
+        total_invested -= total_plusvalenze
+        reso_totale_percentuale = (total_returns / total_invested) * 100
+
+        # Aggiornamento del totale investito e del rendimento totale
+
+
+
+
+
+        # Calcola il rendimento percentuale cumulativo
+        reso_percentuale_cumulativo.append(reso_totale_percentuale)
+
+        # Passa al giorno successivo
+        first_purchase_date += delta
+
+
+    return reso_percentuale_cumulativo
+
 
 def get_binance_symbols():
     # Crea un'istanza del modulo di scambio Binance
@@ -18,8 +124,14 @@ def get_binance_symbols():
 
     try:
         # Ottieni tutti i simboli (coppie di trading) disponibili su Binance
-        symbols = exchange.symbols
-        return symbols
+        symbols = exchange.fetch_markets()
+
+
+        # Filtra i simboli per coppie che hanno USDT come valuta quotata
+        usdt_symbols = [symbol['symbol'] for symbol in symbols if symbol['quote'] == 'USDT']
+
+
+        return usdt_symbols
     except Exception as e:
         print(f"Si è verificato un errore durante il recupero dei simboli da Binance: {e}")
         return None
@@ -31,8 +143,6 @@ def save_symbols_to_file(symbols, filename):
 
             for symbol in symbols:
                 file.write(symbol + '\n')
-
-
 
 
 def load_symbols_from_file(filename):
@@ -76,6 +186,7 @@ def check_for_new_symbols(filename):
 
     return symbol_string
 
+
 def image_inspector(filepath):
     # Lista per salvare le prime parti dei nomi dei file
     crypto_names = []
@@ -93,6 +204,7 @@ def image_inspector(filepath):
             # Se la tipologia di grafico non è stata ancora impostata, impostala
 
     return (crypto_names)
+
 
 def custom_sort_key(element):
     # Utilizza espressione regolare per trovare il primo valore numerico nella stringa
@@ -781,6 +893,9 @@ def crypto_request():
     defi_string.insert(0,"CRIPTOVALUTE: " + str(exact_time))
 
     total = reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict,plusvalenze)
+    portfolio_variation = reso_totale_per_portafoglio_tempo(crypto_portfolio, crypto_data_dict, plusvalenze)
+    plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict)
+
     defi_string.append(total[0])
     defi_string.append("end_simple")
     defi_string.insert(0,"MOVES: " + str(exact_time))
@@ -797,7 +912,7 @@ def crypto_request():
 
     return defi_string
 
-#
+
 # delete_file(FILEPATH_DATI)
 # # #salva file con dati di oggi, se gia ci sono skippa
 # controlla_file()
