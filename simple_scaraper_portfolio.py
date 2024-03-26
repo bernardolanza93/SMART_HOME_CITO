@@ -22,7 +22,7 @@ def calculate_cumulative_percentage_change(prices):
 
 
 def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
-    # Trova la data del primo acquisto
+    # Trova la data del primo acquisto nel portafoglio
     first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
 
     # Trova la data attuale
@@ -30,35 +30,71 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
 
     # Calcola tutti i giorni tra la data del primo acquisto e la data attuale
     days_since_first_purchase = [(current_date - first_purchase_date - timedelta(days=i)).days for i in range((current_date - first_purchase_date).days)]
+    days_since_purchase = [(current_date - datetime.strptime(date, "%Y-%m-%d")).days for date, _ in
+                           crypto_portfolio.keys()]
 
-    # Assicurati che la lunghezza di portfolio_variation sia uguale a quella di days_since_first_purchase
-    days_since_first_purchase.append(0)
 
-
-    # Inverti le date e il rendimento percentuale cumulativo
-
+    print(days_since_purchase)
+    # Estrai i prezzi di chiusura di Bitcoin
     bitcoin_prices = crypto_data_dict.get('BTC/USDT', {}).get('close', [])
-    # Se ci sono dati disponibili per Bitcoin
-    length_difference = len(bitcoin_prices) - len(days_since_first_purchase)
-    if length_difference > 0:
-        # Se la lunghezza di days_since_first_purchase è maggiore, taglia i primi elementi dei prezzi di Bitcoin
-        bitcoin_prices = bitcoin_prices[length_difference:]
 
+    # Calcola il rendimento percentuale cumulativo di Bitcoin
     bitcoin_cumulative_percentage = calculate_cumulative_percentage_change(bitcoin_prices)
 
-    days_since_first_purchase.reverse()
-    date_labels = [(first_purchase_date + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(len(days_since_first_purchase))]
+    # Se ci sono dati disponibili per Bitcoin
+    # Calcola la differenza di lunghezza tra i dati del portafoglio e i dati di Bitcoin
+    days_since_first_purchase.append(0)
+    del bitcoin_cumulative_percentage[:9]
 
-    #portfolio_variation.reverse()
-    plt.figure(figsize=(24, 6))
-    # Plot della variazione percentuale rispetto alle date dal primo acquisto a oggi
-    plt.plot(date_labels, portfolio_variation, label='Portfolio %')
-    plt.plot(date_labels, bitcoin_cumulative_percentage, label='Bitcoin')
+    print(len(days_since_first_purchase),len(bitcoin_cumulative_percentage),len(portfolio_variation))
+    print(days_since_first_purchase)
+
+    length_difference = len(days_since_first_purchase) - len(bitcoin_cumulative_percentage)
+
+    if length_difference > 0:
+
+        # Se la lunghezza di days_since_first_purchase è maggiore, taglia i primi elementi dei prezzi di Bitcoin
+        days_since_first_purchase_mod = days_since_first_purchase[length_difference:]
+    else:
+        days_since_first_purchase_mod = days_since_first_purchase
+
+    length_difference_2 = len(days_since_first_purchase) - len(portfolio_variation)
+    if length_difference_2 > 0:
+        # Se la lunghezza di days_since_first_purchase è maggiore, taglia i primi elementi dei prezzi di Bitcoin
+        days_since_first_purchase_2 = days_since_first_purchase[length_difference_2:]
+    else:
+        days_since_first_purchase_2 = days_since_first_purchase
+
+    portfolio_variation.reverse()
+    bitcoin_cumulative_percentage.reverse()
+
+
+
+
+
+    # Plot dell'andamento del portafoglio
+    plt.plot(days_since_first_purchase_2, portfolio_variation, label='Portafoglio')
+
+    # Estrai solo l'ultimo dodicesimo elemento dalla lista dei valori del portafoglio e delle date
+    portfolio_variation_last_twelfth = portfolio_variation[-365:]
+    date_labels_last_twelfth = days_since_first_purchase_mod[-365:]
+
+    max_portfolio_value = max(portfolio_variation_last_twelfth)
+    min_portfolio_value = min(portfolio_variation_last_twelfth)
+
+    # Plot dell'andamento di Bitcoin
+    plt.plot(days_since_first_purchase_mod, bitcoin_cumulative_percentage, label='Bitcoin')
+    portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_purchase]
+    # Aggiungi punti per i giorni di acquisto sul grafico
+
+    plt.scatter(days_since_purchase, portfolio_values_acquisition, color='red')
+
     # Aggiungi etichette agli assi e una legenda
-    plt.xlabel('Data del primo acquisto fino ad oggi')
-    plt.ylabel('Variazione Percentuale Cumulativa')
+    plt.xlabel('Giorni dalla data del primo acquisto')
+    plt.ylabel('Valore del Portafoglio')
     plt.legend()
-    plt.xticks(range(0, len(date_labels), 30), date_labels[::30], rotation=45)
+    plt.xlim(date_labels_last_twelfth[0], date_labels_last_twelfth[-1])
+    plt.ylim(min_portfolio_value, max_portfolio_value)
 
     # Mostra il grafico
     plt.savefig(FOLDER_GRAPH + f'/ALL_price_plot.png')
@@ -609,7 +645,7 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
 
     string_acquisti = []
 
-
+    # Calcola il rendimento della crypto in questione
     for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
         if nome_crypto == symbol:
             total_invested += importo
@@ -618,14 +654,14 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
             rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto, crypto_data_dict)
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
-            string_acquisti.append(f"{rimuovi_USDT(symbol)}: {rendimento:.0f}% [{importo}$: {converti_formato_data(data_acquisto)}]")
+
+            # Calcola il rendimento come se fosse Bitcoin
+            rendim_btc = get_crypto_percentage_change('BTC/USDT', data_acquisto, crypto_data_dict)
+            string_acquisti.append(f"{rimuovi_USDT(symbol)}: {rendimento:.0f}% [{importo}$:{converti_formato_data(data_acquisto)}] {rendimento-rendim_btc:.0f}%BTC")
 
     reso_totale_percentuale = (total_returns / total_invested) * 100
 
-
-    #string_acquisti.append(f"Total: {reso_totale_percentuale:.2f}% ({total_returns:.2f}/{total_invested}USD)")
-
-
+    # Ritorna il rendimento totale e la lista degli investimenti
     return reso_totale_percentuale, string_acquisti
 def get_crypto_percentage_change(symbol, start_date, crypto_data_dict, end_date=None):
     if symbol in crypto_data_dict:
@@ -943,4 +979,4 @@ def crypto_request():
 #         pr = 1
 #     if pr == 1:
 #         print(info_c)
-
+#
