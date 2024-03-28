@@ -1,5 +1,5 @@
 #!/bin/bash
-sleep 10
+sleep 30
 
 cd
 cd  SMART_HOME_CITO/

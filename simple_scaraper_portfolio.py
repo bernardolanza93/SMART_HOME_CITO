@@ -11,6 +11,24 @@ import subprocess
 import pandas as pd
 import re
 
+def extract_purchase_dates_and_amounts(crypto_portfolio):
+    purchase_dates = []
+    purchase_amounts = []
+
+    for (date_str, _), amount in crypto_portfolio.items():
+        # Converti la data da stringa a oggetto datetime
+        date = datetime.strptime(date_str, "%Y-%m-%d")
+
+        # Calcola il numero di giorni trascorsi dall'acquisto fino ad oggi
+        days_since_purchase = (datetime.now() - date).days
+
+        # Aggiungi la data all'elenco dei giorni di acquisto
+        purchase_dates.append(days_since_purchase)
+
+        # Aggiungi l'importo dell'acquisto all'elenco dei soldi spesi
+        purchase_amounts.append(amount)
+
+    return purchase_dates, purchase_amounts
 def calculate_cumulative_percentage_change(prices):
     cumulative_percentage = [0]  # Inizializza con il primo giorno a 0%
     for i in range(1, len(prices)):
@@ -19,9 +37,8 @@ def calculate_cumulative_percentage_change(prices):
     return cumulative_percentage
 
 
-
-
 def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
+    PLOT_DAYS = 60
     # Trova la data del primo acquisto nel portafoglio
     first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
 
@@ -30,11 +47,11 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
 
     # Calcola tutti i giorni tra la data del primo acquisto e la data attuale
     days_since_first_purchase = [(current_date - first_purchase_date - timedelta(days=i)).days for i in range((current_date - first_purchase_date).days)]
-    days_since_purchase = [(current_date - datetime.strptime(date, "%Y-%m-%d")).days for date, _ in
-                           crypto_portfolio.keys()]
+
+    days_since_purchase, purchase_amounts = extract_purchase_dates_and_amounts(crypto_portfolio)
+    print(days_since_purchase, purchase_amounts)
 
 
-    print(days_since_purchase)
     # Estrai i prezzi di chiusura di Bitcoin
     bitcoin_prices = crypto_data_dict.get('BTC/USDT', {}).get('close', [])
 
@@ -47,7 +64,6 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     del bitcoin_cumulative_percentage[:9]
 
     print(len(days_since_first_purchase),len(bitcoin_cumulative_percentage),len(portfolio_variation))
-    print(days_since_first_purchase)
 
     length_difference = len(days_since_first_purchase) - len(bitcoin_cumulative_percentage)
 
@@ -65,8 +81,8 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     else:
         days_since_first_purchase_2 = days_since_first_purchase
 
-    portfolio_variation.reverse()
-    bitcoin_cumulative_percentage.reverse()
+    # portfolio_variation.reverse()
+    # bitcoin_cumulative_percentage.reverse()
 
 
 
@@ -76,8 +92,8 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     plt.plot(days_since_first_purchase_2, portfolio_variation, label='Portafoglio')
 
     # Estrai solo l'ultimo dodicesimo elemento dalla lista dei valori del portafoglio e delle date
-    portfolio_variation_last_twelfth = portfolio_variation[-365:]
-    date_labels_last_twelfth = days_since_first_purchase_mod[-365:]
+    portfolio_variation_last_twelfth = portfolio_variation[-PLOT_DAYS:]
+    date_labels_last_twelfth = days_since_first_purchase_mod[-PLOT_DAYS:]
 
     max_portfolio_value = max(portfolio_variation_last_twelfth)
     min_portfolio_value = min(portfolio_variation_last_twelfth)
@@ -86,9 +102,8 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     plt.plot(days_since_first_purchase_mod, bitcoin_cumulative_percentage, label='Bitcoin')
     portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_purchase]
     # Aggiungi punti per i giorni di acquisto sul grafico
-
-    plt.scatter(days_since_purchase, portfolio_values_acquisition, color='red')
-
+    raggi = [elemento / 10 for elemento in purchase_amounts]
+    plt.scatter(days_since_purchase, portfolio_values_acquisition, s=raggi, color='red')
     # Aggiungi etichette agli assi e una legenda
     plt.xlabel('Giorni dalla data del primo acquisto')
     plt.ylabel('Valore del Portafoglio')
@@ -952,31 +967,35 @@ def crypto_request():
 
     return defi_string
 
+DEBUG = 0
 
-# delete_file(FILEPATH_DATI)
-# # #salva file con dati di oggi, se gia ci sono skippa
-# controlla_file()
-# #
-# # # print(defi_string)
-# crypto_string = leggi_stringa_oggi()
-# # print(crypto_string)
-#
-#
-# # crypto_string = crypto_request()
-#
-# for info in crypto_string:
-#     info_c = converti_formato_data(info)
-#     if info_c == "end_simple":
-#         break
-#     else:
-#         print(info_c)
-#
-# # MOVERS
-# pr = 0
-# for info in crypto_string:
-#     info_c = converti_formato_data(info)
-#     if info_c == "end_simple":
-#         pr = 1
-#     if pr == 1:
-#         print(info_c)
-#
+if DEBUG:
+
+
+    delete_file(FILEPATH_DATI)
+    # #salva file con dati di oggi, se gia ci sono skippa
+    controlla_file()
+    #
+    # # print(defi_string)
+    crypto_string = leggi_stringa_oggi()
+    # print(crypto_string)
+
+
+    # crypto_string = crypto_request()
+
+    for info in crypto_string:
+        info_c = converti_formato_data(info)
+        if info_c == "end_simple":
+            break
+        else:
+            print(info_c)
+
+    # MOVERS
+    pr = 0
+    for info in crypto_string:
+        info_c = converti_formato_data(info)
+        if info_c == "end_simple":
+            pr = 1
+        if pr == 1:
+            print(info_c)
+

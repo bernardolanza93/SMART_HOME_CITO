@@ -268,37 +268,43 @@ def on_callback_query(msg):
 
 
     if query_data=='info':
-        print("||_||_ CHECK INFO LOG")
-        bot.sendMessage(chat_id, "CHAT:")
-        bot.sendMessage(chat_id, str(chat_id))
 
-        now = datetime.now()
-        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-        cpu = CPUTemperature()
-        bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
-        bot.sendMessage(chat_id, str(hourstr))
-        bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
-        loggingR.error("(info)______________________EVENT____________________")
+        try:
+            print("||_||_ CHECK INFO LOG")
+            bot.sendMessage(chat_id, "CHAT:")
+            bot.sendMessage(chat_id, str(chat_id))
+
+            now = datetime.now()
+            hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+            cpu = CPUTemperature()
+            bot.sendMessage(chat_id, 'CPU_temp citofono: %s'%str(cpu.temperature))
+            bot.sendMessage(chat_id, str(hourstr))
+            bot.sendDocument(chat_id, open(path + "RPI_SH.log", 'rb'))
+            loggingR.error("(info)______________________EVENT____________________")
 
 
-        loggingR.error("UTENTE: %s", str(info))
+            loggingR.error("UTENTE: %s", str(info))
 
-        print("||_||_ CHECK STATUS")
-        bot.sendMessage(chat_id, "data from the raspi...")
-        username = os.getlogin()
-        bot.sendMessage(chat_id, "username")
-        bot.sendMessage(chat_id, username)
+            print("||_||_ CHECK STATUS")
+            bot.sendMessage(chat_id, "data from the raspi...")
+            username = os.getlogin()
+            bot.sendMessage(chat_id, "username")
+            bot.sendMessage(chat_id, username)
 
-        # Get the hostname
-        hostname = socket.gethostname()
-        # Get the IP address
-        ip_address = socket.gethostbyname(hostname)
-        bot.sendMessage(chat_id, "hostname")
-        bot.sendMessage(chat_id, hostname)
+            # Get the hostname
+            hostname = socket.gethostname()
+            # Get the IP address
+            ip_address = socket.gethostbyname(hostname)
+            bot.sendMessage(chat_id, "hostname")
+            bot.sendMessage(chat_id, hostname)
 
-        last_pull = get_last_git_pull()
-        bot.sendMessage(chat_id,"Last Git pull:")
-        bot.sendMessage(chat_id,last_pull)
+            last_pull = get_last_git_pull()
+            bot.sendMessage(chat_id,"Last Git pull:")
+            bot.sendMessage(chat_id,last_pull)
+        except Exception as e:
+            bot.sendMessage(chat_id,"ERROR INFO:"+ str(e))
+
+
 
 
 
@@ -306,87 +312,109 @@ def on_callback_query(msg):
 
 
     elif query_data=='open1':
-        print("||_||_ CHECK CANCELLO")
+        try:
+            print("||_||_ CHECK CANCELLO")
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(3, GPIO.OUT)
-        GPIO.output(3, GPIO.HIGH)
-        GPIO.output(3, GPIO.LOW)
-        sleep(1)
-        GPIO.output(3, GPIO.HIGH)
-        bot.sendMessage(chat_id, "apertura cancello...")
-        now = datetime.now()
-        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-        loggingR.error("(open1)______________________EVENT____________________")
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(3, GPIO.OUT)
+            GPIO.output(3, GPIO.HIGH)
+            GPIO.output(3, GPIO.LOW)
+            sleep(1)
+            GPIO.output(3, GPIO.HIGH)
+            bot.sendMessage(chat_id, "apertura cancello...")
+            now = datetime.now()
+            hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+            loggingR.error("(open1)______________________EVENT____________________")
 
-        loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
-        loggingR.error("UTENTE: %s", str(info))
-        bot.sendMessage(chat_id, "ID CHAT:")
-        bot.sendMessage(chat_id, str(chat_id))
+            loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
+            loggingR.error("UTENTE: %s", str(info))
+            bot.sendMessage(chat_id, "ID CHAT:")
+            bot.sendMessage(chat_id, str(chat_id))
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR GATE:" + str(e))
+
 
 
     elif query_data=='open2':
+        try:
 
-        print("||_||_ CHECK REBOOT")
-        bot.sendMessage(chat_id, "reboot in corso...")
-        os.system('sudo reboot')
-        now = datetime.now()
-        hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
-        loggingR.error("(open2)______________________EVENT____________________")
-        loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
-        loggingR.error("UTENTE: %s", str(info))
+            print("||_||_ CHECK REBOOT")
+            bot.sendMessage(chat_id, "reboot in corso...")
+            os.system('sudo reboot')
+            now = datetime.now()
+            hourstr = now.strftime("%Y-%m-%d %H:%M:%S")
+            loggingR.error("(open2)______________________EVENT____________________")
+            loggingR.error("APERTURA CANCELLO____time: %s", str(hourstr))
+            loggingR.error("UTENTE: %s", str(info))
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR REBOOT:" + str(e))
 
 
     elif query_data=='crypto':
         # Send the submenu inline keyboard
-        bot.sendMessage(chat_id, 'CRYPTO:', reply_markup=create_inline_keyboard())
-
+        try:
+            bot.sendMessage(chat_id, 'CRYPTO:', reply_markup=create_inline_keyboard())
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR CRYPTO MENU:" + str(e))
 
 
     elif query_data=='data':
 
-        invia_immagine(chat_id, FOLDER_GRAPH + "/" + "ALL" + PLOT_STRING_TITLE, bot)
-        crypto_string = leggi_stringa_oggi()
+        try:
 
-        # plot_andamento_cripto(nome_crypto, crypto_portfolio)
-        for info in crypto_string:
-            info_c = converti_formato_data(info)
-            if info_c == "end_simple":
-                break
-            else:
-                bot.sendMessage(chat_id,info_c)
+            invia_immagine(chat_id, FOLDER_GRAPH + "/" + "ALL" + PLOT_STRING_TITLE, bot)
+            crypto_string = leggi_stringa_oggi()
+
+            # plot_andamento_cripto(nome_crypto, crypto_portfolio)
+            for info in crypto_string:
+                info_c = converti_formato_data(info)
+                if info_c == "end_simple":
+                    break
+                else:
+                    bot.sendMessage(chat_id,info_c)
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR CRYPTO PORTFOLIO:" + str(e))
 
     elif query_data == 'update':
 
-        delete_file(FILEPATH_DATI)
-        bot.sendMessage(chat_id, 'distrutto:'+FILEPATH_DATI)
-        controlla_file()
-        bot.sendMessage(chat_id, "update lanciato")
-        #cosi lo distruggo e lo ricreo- forse e troppo difficile calcellare solo l iìultima data. mi serve veramente salvare questi dati?
-        #qua inserisci l update
+        try:
+
+            delete_file(FILEPATH_DATI)
+            bot.sendMessage(chat_id, 'distrutto:'+FILEPATH_DATI)
+            controlla_file()
+            bot.sendMessage(chat_id, "update lanciato")
+            #cosi lo distruggo e lo ricreo- forse e troppo difficile calcellare solo l iìultima data. mi serve veramente salvare questi dati?
+            #qua inserisci l update
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR CRYPTO UPDATE:" + str(e))
 
     elif query_data == 'movers':
 
-        bot.sendMessage(chat_id, 'MOVERS:')
-        crypto_string = leggi_stringa_oggi()
+        try:
 
-        pr = 0
-        for info in crypto_string:
-            info_c = converti_formato_data(info)
-            if info_c == "end_simple":
-                pr = 1
-            if pr == 1:
-                bot.sendMessage(chat_id, info_c)
+            bot.sendMessage(chat_id, 'MOVERS:')
+            crypto_string = leggi_stringa_oggi()
+
+            pr = 0
+            for info in crypto_string:
+                info_c = converti_formato_data(info)
+                if info_c == "end_simple":
+                    pr = 1
+                if pr == 1:
+                    bot.sendMessage(chat_id, info_c)
 
 
-
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR CRYPTO MOVERS:" + str(e))
 
 
 
     elif query_data == 'back_to_main_menu':
-        # Send the main menu inline keyboard again
-        bot.sendMessage(chat_id, 'Main Menu:', reply_markup=keyboard_1)
-
+        try:
+            # Send the main menu inline keyboard again
+            bot.sendMessage(chat_id, 'Main Menu:', reply_markup=keyboard_1)
+        except Exception as e:
+            bot.sendMessage(chat_id, "ERROR CRYPTO BACK:" + str(e))
 
 
 
