@@ -190,30 +190,45 @@ def write_data_csv(bot):
 
     
 def on_chat_message(msg):
-    content_type, chat_type, chat_id = telepot.glance(msg)
-    rispondi = 0
-    autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
-    print(msg)
-    print(type(msg))
-    print(msg['from'])
-    who = msg['from']['first_name']
-    what = msg['text']
+    try:
+        content_type, chat_type, chat_id = telepot.glance(msg)
+    except  Exception as e:
+        print("!!!!!!!error glancing", e)
 
-    bot.sendMessage(chat_id, "Hi " + str(who) + " you say:" +str(what))
-
-    if not autorizzazione:
-        bot.sendMessage(bernardo_chat_id,   str(who) + " says: " + str(what) + "[SU-COM]")
-
-        if str(what)  == 'Juve':
-            bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
-            rispondi = 1
-        else:
-            bot.sendMessage(chat_id, "NOT AUTHORIZED ILLEGAL USE OF THE BOT")
-            bot.sendMessage(chat_id, "CALLING CARABINIERI  113....")
-            rispondi = 0
+    if chat_id != bernardo_chat_id:
+        bot.sendMessage(bernardo_chat_id,  "someone is writing...")
+        #imposto tutte le risposte comunque a me.... anche se altri scrivono
+        chat_id = bernardo_chat_id
+        rispondi = 0
     else:
-        bot.sendMessage(chat_id, "BENTORNATO "+ str(who))
         rispondi = 1
+
+    #conversatore interfaccia nuovi utenti, disabilitata per virus
+    VIRUS_CLEAR = 0
+    if VIRUS_CLEAR:
+        rispondi = 0
+        autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
+        print(msg)
+        print(type(msg))
+        print(msg['from'])
+        who = msg['from']['first_name']
+        what = msg['text']
+
+        bot.sendMessage(chat_id, "Hi " + str(who) + " you say:" +str(what))
+
+        if not autorizzazione:
+            bot.sendMessage(bernardo_chat_id,   str(who) + " says: " + str(what) + "[SU-COM]")
+
+            if str(what)  == 'Juve':
+                bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
+                rispondi = 1
+            else:
+                bot.sendMessage(chat_id, "NOT AUTHORIZED ILLEGAL USE OF THE BOT")
+                bot.sendMessage(chat_id, "CALLING CARABINIERI  113....")
+                rispondi = 0
+        else:
+            bot.sendMessage(chat_id, "BENTORNATO "+ str(who))
+            rispondi = 1
 
 
     if rispondi:
