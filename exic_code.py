@@ -132,6 +132,12 @@ def check_folder(relative_path):
 
 def write_data_csv(bot):
 
+    while True:
+        bot.sendMessage(-1002018243058, "LEAVE ME ALONE")
+        bot.sendMessage(6997261160, "LEAVE ME ALONE")
+        print("rr")
+
+
 
 
     bot.sendMessage(bernardo_chat_id, "TRADER BOT READY - BOOT FREE LOOP")
@@ -412,6 +418,7 @@ def on_callback_query(msg):
 
 
 def bot_ini(bot):
+    print("bot ini")
 
     try:
         MessageLoop(bot, {'chat': on_chat_message,
@@ -475,7 +482,7 @@ except Exception as e:
 
 try:
 
-    p_sensor.start()
+    #p_sensor.start()
 except Exception as e:
     loggingR.error("PROCESS error 4:  %s ", e)
 print("||_||_ CHECK START PROCESS")
@@ -483,9 +490,9 @@ print("||_||_ CHECK START PROCESS")
 # print("ID of process p1: {}".format(p1.pid))
 print("ID of process p1: {}".format(p2.pid))
 # print("ID of process p1: {}".format(p3_ri.pid))
-print("ID of process p1: {}".format(p_sensor.pid))
+#print("ID of process p1: {}".format(p_sensor.pid))
 
 # p1.join()
 p2.join()
 # p3_ri.join()
-p_sensor.join()
+#p_sensor.join()
