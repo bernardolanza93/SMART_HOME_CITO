@@ -140,9 +140,6 @@ def write_data_csv(bot):
     except Exception as e:
         bot.sendMessage(bernardo_chat_id, "ERROR BINANCE SYMBOL:" + str(e))
 
-
-
-
     while True:
         try:
 
@@ -150,14 +147,13 @@ def write_data_csv(bot):
 
             # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
             new_symbols = set(current_symbols) - set(initial_symbols)
+            if new_symbols is not None:
+                if new_symbols:
+                    bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
+                    for symbol in new_symbols:
+                        bot.sendMessage(bernardo_chat_id, symbol)
 
-            if new_symbols:
-                bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
-
-                for symbol in new_symbols:
-                    bot.sendMessage(bernardo_chat_id, symbol)
-
-                initial_symbols = current_symbols
+                    initial_symbols = current_symbols
 
                     # Aumenta il contatore ad ogni iterazione del ciclo
         except Exception as e:
@@ -190,10 +186,11 @@ def write_data_csv(bot):
 
     
 def on_chat_message(msg):
+    print("_______________________________________________!|!||!|!||",msg)
     try:
         content_type, chat_type, chat_id = telepot.glance(msg)
     except  Exception as e:
-        print("!!!!!!!error glancing", e)
+        print("!!!!!!!error glancing", e,content_type, chat_type, chat_id)
 
     if chat_id != bernardo_chat_id:
         bot.sendMessage(bernardo_chat_id,  "someone is writing...")
