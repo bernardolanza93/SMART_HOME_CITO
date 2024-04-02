@@ -49,7 +49,7 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     days_since_first_purchase = [(current_date - first_purchase_date - timedelta(days=i)).days for i in range((current_date - first_purchase_date).days)]
 
     days_since_purchase, purchase_amounts = extract_purchase_dates_and_amounts(crypto_portfolio)
-    print(days_since_purchase, purchase_amounts)
+    #print(days_since_purchase, purchase_amounts)
 
 
     # Estrai i prezzi di chiusura di Bitcoin
@@ -63,7 +63,7 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     days_since_first_purchase.append(0)
     del bitcoin_cumulative_percentage[:9]
 
-    print(len(days_since_first_purchase),len(bitcoin_cumulative_percentage),len(portfolio_variation))
+    #print(len(days_since_first_purchase),len(bitcoin_cumulative_percentage),len(portfolio_variation))
 
     length_difference = len(days_since_first_purchase) - len(bitcoin_cumulative_percentage)
 
@@ -100,10 +100,13 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
 
     # Plot dell'andamento di Bitcoin
     plt.plot(days_since_first_purchase_mod, bitcoin_cumulative_percentage, label='Bitcoin')
-    portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_first_purchase_2]
+
+    portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_purchase]
+
     # Aggiungi punti per i giorni di acquisto sul grafico
     raggi = [elemento / 10 for elemento in purchase_amounts]
-    day_shift = [x -1 for x in days_since_first_purchase_2]
+    day_shift = [x -1 for x in days_since_purchase]
+
     plt.scatter(day_shift, portfolio_values_acquisition, s=raggi, color='red')
     # Aggiungi etichette agli assi e una legenda
     plt.xlabel('Giorni dalla data del primo acquisto')
@@ -968,7 +971,7 @@ def crypto_request():
 
     return defi_string
 
-DEBUG = 0
+DEBUG = 1
 
 if DEBUG:
 
