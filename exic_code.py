@@ -443,7 +443,6 @@ try:
     fh = logging.FileHandler('./data/RPI_SH.log')
     fh.setLevel(logging.DEBUG)
     loggingR.addHandler(fh)
-
     loggingR.error("STARDED LOGGING FILE____time: %s", str(hourstr))
 except Exception as e:
     print("ERROR LOGGING: ", e)
@@ -480,11 +479,11 @@ except Exception as e:
 # except Exception as e:
 #     loggingR.error("PROCESS error 3:  %s ", e)
 
-try:
-
-    #p_sensor.start()
-except Exception as e:
-    loggingR.error("PROCESS error 4:  %s ", e)
+# try:
+#
+#     #p_sensor.start()
+# except Exception as e:
+#     loggingR.error("PROCESS error 4:  %s ", e)
 print("||_||_ CHECK START PROCESS")
 
 # print("ID of process p1: {}".format(p1.pid))
