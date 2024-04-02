@@ -133,72 +133,54 @@ def check_folder(relative_path):
 
 
 
-
-def make_graph():
-
-    headers = ['data','temp','hum']
-    df = pd.read_csv('temp_dataRPCITO.csv',names=headers)
-    print (df)
-
-    df['data'] = df['data'].map(lambda x: datetime.strptime(str(x), '%Y-%m-%d %H:%M:%S'))
-    x = df['data']
-    y = df['temp']
-    z = df['hum']
-
-
-    fig, ax1 = plt.subplots()
-
-    color = 'tab:red'
-    ax1.set_xlabel('time',rotation=45)
-    ax1.set_ylabel('Temp', color=color)
-    ax1.plot(x, y, color=color)
-    ax1.tick_params(axis='y', labelcolor=color)
-    ax1.grid(True)
-    ax1.tick_params(axis='x', labelrotation=45)
-    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-
-    color = 'tab:blue'
-    ax2.set_ylabel('hum', color=color)  # we already handled the x-label with ax1
-    ax2.plot(x,z, color=color)
-    ax2.tick_params(axis='y', labelcolor=color)
-
-    fig.tight_layout()
-    # otherwise the right y-label is slightly clipped
-    
-    plt.savefig('plot_data_citofono.png')
-    plt.close("all")
-    #The simplest way is to start the ntetwork loop on a separate thread using the client.loop_start() function, then use the normal client.publish method
-
-
-
-
 def write_data_csv(bot):
-    bot.sendMessage(bernardo_chat_id, "TRADER BOT READY")
-    initial_symbols = get_binance_symbols()
+
+
+
+    bot.sendMessage(bernardo_chat_id, "TRADER BOT READY - BOOT FREE LOOP")
+    try:
+        initial_symbols = get_binance_symbols()
+    except Exception as e:
+        bot.sendMessage(bernardo_chat_id, "ERROR BINANCE SYMBOL:" + str(e))
+
+
+
 
     while True:
+        try:
 
-        current_symbols = get_binance_symbols()
+            current_symbols = get_binance_symbols()
 
-        # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
-        new_symbols = set(current_symbols) - set(initial_symbols)
+            # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
+            new_symbols = set(current_symbols) - set(initial_symbols)
 
-        if new_symbols:
-            bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
+            if new_symbols:
+                bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
 
-            for symbol in new_symbols:
-                bot.sendMessage(bernardo_chat_id, symbol)
+                for symbol in new_symbols:
+                    bot.sendMessage(bernardo_chat_id, symbol)
 
-            initial_symbols = current_symbols
+                initial_symbols = current_symbols
 
-                # Aumenta il contatore ad ogni iterazione del ciclo
+                    # Aumenta il contatore ad ogni iterazione del ciclo
+        except Exception as e:
+            bot.sendMessage(bernardo_chat_id, "ERROR NEW SYMBOL :" + str(e))
 
-        # Get the current time
-        current_time = datetime.now().time()
+        try:
 
-        # Check if it's after 8 AM
-        if current_time.hour >= 8:
-            controlla_file()
+            # Get the current time
+            current_time = datetime.now().time()
+
+
+            # Check if it's after 8 AM
+            if current_time.hour >= 8:
+                controlla_file()
+        except Exception as e:
+            bot.sendMessage(bernardo_chat_id, "ERROR MORNING ROUTINE SCRAPING :" + str(e))
+
+
+
+
         time.sleep(20)
         
 
