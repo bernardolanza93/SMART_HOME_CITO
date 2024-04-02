@@ -203,16 +203,16 @@ def on_chat_message(msg):
     except  Exception as e:
         print("!!!!!!!error glancing", e, chat_id)
 
-    if chat_id != bernardo_chat_id:
-        bot.sendMessage(bernardo_chat_id,  "someone is writing...")
-        #imposto tutte le risposte comunque a me.... anche se altri scrivono
-        chat_id = bernardo_chat_id
-        rispondi = 0
-    else:
-        rispondi = 1
+    # if chat_id != bernardo_chat_id:
+    #     bot.sendMessage(bernardo_chat_id,  "someone is writing...")
+    #     #imposto tutte le risposte comunque a me.... anche se altri scrivono
+    #     chat_id = bernardo_chat_id
+    #     rispondi = 0
+    # else:
+    #     rispondi = 1
 
     #conversatore interfaccia nuovi utenti, disabilitata per virus
-    VIRUS_CLEAR = 0
+    VIRUS_CLEAR = 1
     if VIRUS_CLEAR:
         rispondi = 0
         autorizzazione, nome = controllo_autorizzazione_utente(chat_id)
