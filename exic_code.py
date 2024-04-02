@@ -476,7 +476,7 @@ else:
     print("Impossibile leggere il codice del bot.")
 
 
-bot = telepot.Bot(str(codice_bot))
+bot = telepot.Bot('7003661229:AAEqJdSXnEUXYWaXuzdntB1KwfRq4OFP6IQ')
 
 
 
