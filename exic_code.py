@@ -415,10 +415,12 @@ def on_callback_query(msg):
 
 def bot_ini(bot):
 
-
-    MessageLoop(bot, {'chat': on_chat_message,
-      'callback_query': on_callback_query}).run_as_thread()
-    print("||_||_ CHECK BOT ONLINE")
+    try:
+        MessageLoop(bot, {'chat': on_chat_message,
+          'callback_query': on_callback_query}).run_as_thread()
+        print("||_||_ CHECK BOT ONLINE")
+    except Exception as e:
+        print("ERROR ON BOT STARTING:", bot , e)
 
     while True:
         sleep(2)
