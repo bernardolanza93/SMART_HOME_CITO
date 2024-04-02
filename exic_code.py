@@ -439,25 +439,24 @@ bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
 
 loggingR.error("INI____ALL(4 yeah) PROCs: %s", str(hourstr))
 print("||_||_ CHECK PROCESSES")
-p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_from_tcp_ID,))
+#p1 = multiprocessing.Process(target=reciver.listen_for_TCP_string, args=(string_from_tcp_ID,))
 p2 = multiprocessing.Process(target=bot_ini,args = (bot,))
-p3_ri = multiprocessing.Process(target=reciver.main)
+#p3_ri = multiprocessing.Process(target=reciver.main)
 p_sensor = multiprocessing.Process(target=write_data_csv,args = (bot,))
 
 
-try:
-    p1.start()
-except Exception as e:
-    loggingR.error("PROCESS error 1:  %s ", e)
+# try:
+#     p1.start()
+# except Exception as e:
+#     loggingR.error("PROCESS error 1:  %s ", e)
 try:
     p2.start()
 except Exception as e:
     loggingR.error("PROCESS error 2:  %s ", e)
-try:
-
-    p3_ri.start()
-except Exception as e:
-    loggingR.error("PROCESS error 3:  %s ", e)
+# try:
+#     p3_ri.start()
+# except Exception as e:
+#     loggingR.error("PROCESS error 3:  %s ", e)
 
 try:
 
@@ -466,12 +465,12 @@ except Exception as e:
     loggingR.error("PROCESS error 4:  %s ", e)
 print("||_||_ CHECK START PROCESS")
 
-print("ID of process p1: {}".format(p1.pid))
+# print("ID of process p1: {}".format(p1.pid))
 print("ID of process p1: {}".format(p2.pid))
-print("ID of process p1: {}".format(p3_ri.pid))
+# print("ID of process p1: {}".format(p3_ri.pid))
 print("ID of process p1: {}".format(p_sensor.pid))
 
-p1.join()
+# p1.join()
 p2.join()
-p3_ri.join()
+# p3_ri.join()
 p_sensor.join()
