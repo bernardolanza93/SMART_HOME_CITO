@@ -456,7 +456,7 @@ crea_file_utenti_autorizzati()
 print("||_||_ CHECK BOT")
 humidity = 0.0
 temperature = 0.0
-bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
+#bot = telepot.Bot('2070265556:AAHtStxZRT_J9hxvBtC7EKdnfM6sXVOgJ4U')
 
 loggingR.error("INI____ALL(4 yeah) PROCs: %s", str(hourstr))
 print("||_||_ CHECK PROCESSES")
