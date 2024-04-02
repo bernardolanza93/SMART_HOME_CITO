@@ -188,9 +188,10 @@ def write_data_csv(bot):
 def on_chat_message(msg):
     print("_______________________________________________!|!||!|!||",msg)
     try:
-        content_type, chat_type, chat_id = telepot.glance(msg)
+        #content_type, chat_type, chat_id = telepot.glance(msg)
+        chat_id = msg['chat']['id']
     except  Exception as e:
-        print("!!!!!!!error glancing", e,content_type, chat_type, chat_id)
+        print("!!!!!!!error glancing", e, chat_id)
 
     if chat_id != bernardo_chat_id:
         bot.sendMessage(bernardo_chat_id,  "someone is writing...")
