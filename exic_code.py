@@ -19,9 +19,6 @@ import multiprocessing
 import os
 import cv2
 import logging
-
-import reciver
-
 import csv
 import pandas as pd
 
