@@ -115,8 +115,16 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     plt.xlim(date_labels_last_twelfth[0], date_labels_last_twelfth[-1])
     plt.ylim(min_portfolio_value, max_portfolio_value)
 
-    # Mostra il grafico
-    plt.savefig(FOLDER_GRAPH + f'/ALL_price_plot.png')
+    # Percorso del file di salvataggio
+    file_path_fig = FOLDER_GRAPH + '/ALL_price_plot.png'
+
+    # Verifica se il file esiste già
+    if os.path.exists(file_path_fig):
+        # Se il file esiste, eliminilo
+        os.remove(file_path_fig)
+
+    # Salva la figura
+    plt.savefig(file_path_fig)
 
 
 
