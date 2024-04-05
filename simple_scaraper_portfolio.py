@@ -38,7 +38,7 @@ def calculate_cumulative_percentage_change(prices):
 
 
 def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
-    PLOT_DAYS = 60
+    PLOT_DAYS = 90
     # Trova la data del primo acquisto nel portafoglio
     first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
 
