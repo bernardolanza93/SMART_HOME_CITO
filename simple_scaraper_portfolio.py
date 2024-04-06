@@ -10,6 +10,18 @@ from CONSTANT import *
 import subprocess
 import pandas as pd
 import re
+import calendar
+
+
+def convet_numbers_to_day_in_past_dates(days_in_past):
+    today = datetime.now()
+    custom_dates = []
+    for days in days_in_past:
+        date = today - timedelta(days=days)
+        month_name = calendar.month_abbr[date.month]
+        custom_date_format = f"{date.day} {month_name}, {date.year}"
+        custom_dates.append(custom_date_format)
+    return custom_dates
 
 def extract_purchase_dates_and_amounts(crypto_portfolio):
     purchase_dates = []
@@ -39,6 +51,7 @@ def calculate_cumulative_percentage_change(prices):
 
 def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
     PLOT_DAYS = 90
+    REDUCTION_BITCOIN_POWER = 50
     # Trova la data del primo acquisto nel portafoglio
     first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
 
@@ -89,31 +102,52 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
 
 
     # Plot dell'andamento del portafoglio
-    plt.plot(days_since_first_purchase_2, portfolio_variation, label='Portafoglio')
+    plt.figure(figsize=(12, 6))
+    plt.plot(convet_numbers_to_day_in_past_dates(days_since_first_purchase_2), portfolio_variation, label='Portafoglio')
+    plt.grid(True)
 
     # Estrai solo l'ultimo dodicesimo elemento dalla lista dei valori del portafoglio e delle date
+    bitcoin_cumulative_percentage_mod = [x - REDUCTION_BITCOIN_POWER for x in bitcoin_cumulative_percentage]
+
+
     portfolio_variation_last_twelfth = portfolio_variation[-PLOT_DAYS:]
+    BTC_variation_last_twelfth = bitcoin_cumulative_percentage_mod[-PLOT_DAYS:]
     date_labels_last_twelfth = days_since_first_purchase_mod[-PLOT_DAYS:]
+
+    converted_last_dates_twelfth = convet_numbers_to_day_in_past_dates(date_labels_last_twelfth)
 
     max_portfolio_value = max(portfolio_variation_last_twelfth)
     min_portfolio_value = min(portfolio_variation_last_twelfth)
 
+    max_BTC_value = max(BTC_variation_last_twelfth)
+    min_BTC_value = min(BTC_variation_last_twelfth)
+
+    max_graph = max([max_BTC_value,max_portfolio_value])
+    min_graph = min([min_BTC_value,min_portfolio_value])
+
     # Plot dell'andamento di Bitcoin
-    plt.plot(days_since_first_purchase_mod, bitcoin_cumulative_percentage, label='Bitcoin')
+
+
+    plt.plot(convet_numbers_to_day_in_past_dates(days_since_first_purchase_mod), bitcoin_cumulative_percentage_mod, label=f'Bitcoin - {REDUCTION_BITCOIN_POWER}%')
 
     portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_purchase]
 
     # Aggiungi punti per i giorni di acquisto sul grafico
-    raggi = [elemento / 5 for elemento in purchase_amounts]
+    raggi = [elemento / 3 for elemento in purchase_amounts]
     day_shift = [x -1 for x in days_since_purchase]
 
-    plt.scatter(day_shift, portfolio_values_acquisition, s=raggi, color='red')
+    plt.scatter(convet_numbers_to_day_in_past_dates(day_shift), portfolio_values_acquisition, s=raggi, color='red')
     # Aggiungi etichette agli assi e una legenda
     plt.xlabel('Giorni dalla data del primo acquisto')
     plt.ylabel('Valore del Portafoglio')
     plt.legend()
-    plt.xlim(date_labels_last_twelfth[0], date_labels_last_twelfth[-1])
-    plt.ylim(min_portfolio_value, max_portfolio_value)
+    plt.xlim(converted_last_dates_twelfth[0], converted_last_dates_twelfth[-1])
+    plt.ylim(min_graph, max_graph)
+    plt.xticks(rotation=45)  # Rotazione delle date per una migliore leggibilità
+    plt.gca().xaxis.set_major_locator(plt.MaxNLocator(nbins=15))  # Imposta il numero massimo di ticks sull'asse x
+    plt.tight_layout()  # Ottimizza il layout del grafico
+
+
 
     # Percorso del file di salvataggio
     file_path_fig = FOLDER_GRAPH + '/ALL_price_plot.png'
@@ -122,6 +156,7 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     if os.path.exists(file_path_fig):
         # Se il file esiste, eliminilo
         os.remove(file_path_fig)
+        print("removed old plot")
 
     # Salva la figura
     plt.savefig(file_path_fig)
