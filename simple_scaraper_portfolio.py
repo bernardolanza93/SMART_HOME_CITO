@@ -897,11 +897,11 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'ROSE/USDT', '2024-03-04', 75)
     aggiungi_crypto(crypto_portfolio, 'GRT/USDT', '2024-03-06', 48)
 
-    aggiungi_crypto(crypto_portfolio, 'ALCX/USDT', '2024-04-08', 2)
-    aggiungi_crypto(crypto_portfolio, 'FARM/USDT', '2024-04-08', 1)
-    aggiungi_crypto(crypto_portfolio, 'TNSR/USDT', '2024-04-08', 1)
-    aggiungi_crypto(crypto_portfolio, 'STRAX/USDT', '2024-04-08', 1)
-    aggiungi_crypto(crypto_portfolio, 'CREAM/USDT', '2024-04-08', 1)
+    # aggiungi_crypto(crypto_portfolio, 'ALCX/USDT', '2024-04-08', 2)
+    # aggiungi_crypto(crypto_portfolio, 'FARM/USDT', '2024-04-08', 1)
+    # aggiungi_crypto(crypto_portfolio, 'TNSR/USDT', '2024-04-08', 1)
+    # aggiungi_crypto(crypto_portfolio, 'STRAX/USDT', '2024-04-08', 1)
+    # aggiungi_crypto(crypto_portfolio, 'CREAM/USDT', '2024-04-08', 1)
 
 
 
