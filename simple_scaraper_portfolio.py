@@ -905,6 +905,10 @@ def crypto_request():
 
 
 
+
+
+
+
     giorni_acquisto_piu_vecchio = calcola_giorni_primo_acquisto(crypto_portfolio)
 
     plusvalenze = []
