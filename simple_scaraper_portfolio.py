@@ -902,15 +902,15 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'TNSR/USDT', '2024-04-08', 1)
     aggiungi_crypto(crypto_portfolio, 'STRAX/USDT', '2024-04-08', 1)
     aggiungi_crypto(crypto_portfolio, 'CREAM/USDT', '2024-04-08', 1)
-
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-04-13', 20)
-    aggiungi_crypto(crypto_portfolio, 'TAO/USDT', '2024-04-12', 15)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-13', 20)
-    aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-04-13', 10)
-    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-04-13', 10)
-    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-04-13', 10)
-
-
+    #
+    # aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-04-13', 20)
+    # aggiungi_crypto(crypto_portfolio, 'TAO/USDT', '2024-04-12', 15)
+    # aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-13', 20)
+    # aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-04-13', 10)
+    # aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-04-13', 10)
+    # aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-04-13', 10)
+    #
+    #
 
 
 
@@ -920,6 +920,7 @@ def crypto_request():
 
     plusvalenze = []
     PEPE = 15
+    FLOKY = 29
     PEPE_DATA = ('PEPE/USDT', '2024-02-23', '2024-03-02', 10) #25
     plusvalenze = aggiungi_plusvalenza(plusvalenze, PEPE)
 
