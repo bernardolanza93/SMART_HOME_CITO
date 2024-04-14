@@ -902,15 +902,15 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'TNSR/USDT', '2024-04-08', 1)
     aggiungi_crypto(crypto_portfolio, 'STRAX/USDT', '2024-04-08', 1)
     aggiungi_crypto(crypto_portfolio, 'CREAM/USDT', '2024-04-08', 1)
-    #
-    # aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-04-13', 20)
-    # aggiungi_crypto(crypto_portfolio, 'TAO/USDT', '2024-04-12', 15)
-    # aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-13', 20)
-    # aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-04-13', 10)
-    # aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-04-13', 10)
-    # aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-04-13', 10)
-    #
-    #
+
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-04-13', 20)
+    aggiungi_crypto(crypto_portfolio, 'TAO/USDT', '2024-04-12', 15)
+    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-13', 20)
+    aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-04-13', 10)
+    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-04-13', 10)
+    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-04-13', 10)
+
+
 
 
 
