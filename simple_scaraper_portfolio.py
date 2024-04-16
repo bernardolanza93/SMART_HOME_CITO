@@ -586,6 +586,8 @@ def trend_e_variazione_percentuale(crypto_data_dict, symbol, num_giorni):
 
 
 def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_percentuale=2):
+    MINIMUM_HISTORY_ON_BINANCEC = 15
+    ultimi_giorni_da_non_contare = 10
     # Ottieni la data e l'ora correnti
     current_datetime = datetime.now()
 
@@ -601,14 +603,14 @@ def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_
     # Estrai il prezzo di chiusura per ogni giorno
     prices = df['close'].astype(float).tolist()
 
-    if len(prices) > 8:
+    if len(prices) > MINIMUM_HISTORY_ON_BINANCEC:
 
         # Calcola il valore attuale della criptovaluta
         valore_attuale = prices[-1]
 
         # Trova l'indice del minimo locale con uno sconto del 5%
         minimo_locale_index = None
-        ultimi_giorni_da_non_contare = 2
+
         for i in range(len(prices) - ultimi_giorni_da_non_contare, 0, -1):
 
             if (valore_attuale - prices[i]) / valore_attuale * 100 >= sconto_percentuale:
