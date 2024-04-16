@@ -912,6 +912,13 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-04-13', 10)
     aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-04-13', 10)
 
+    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2024-04-16', 40)
+    aggiungi_crypto(crypto_portfolio, 'JUV/USDT', '2024-04-16', 2)
+    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-04-16', 25)
+    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-16', 30)
+
+
+
 
 
 
