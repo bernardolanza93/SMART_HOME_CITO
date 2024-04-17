@@ -781,6 +781,77 @@ def salva_portfolio(portfolio, file_path):
         with open(file_path, 'w') as f:
             json.dump(portfolio, f)
 
+
+def calcola_rapporto_btc_eth(crypto_data_dict):
+    btc_prices = crypto_data_dict.get('BTC/USDT', {}).get('close', [])
+    eth_prices = crypto_data_dict.get('ETH/USDT', {}).get('close', [])
+
+    min_length = min(len(btc_prices), len(eth_prices))
+    btc_prices = btc_prices[:min_length]
+    eth_prices = eth_prices[:min_length]
+
+    rapporto_btc_eth = [btc_price / eth_price for btc_price, eth_price in zip(btc_prices, eth_prices)]
+
+    return btc_prices, eth_prices, rapporto_btc_eth
+
+
+def plot_rapporto_btc_eth(btc_prices, eth_prices, rapporto_btc_eth):
+    DAYS_RATIO = 120
+
+    # Seleziona gli ultimi 150 valori
+    btc_prices_last_150 = btc_prices[-DAYS_RATIO:]
+    eth_prices_last_150 = eth_prices[-DAYS_RATIO:]
+    rapporto_btc_eth_last_150 = rapporto_btc_eth[-DAYS_RATIO:]
+
+    min_btc = min(btc_prices_last_150)
+    max_btc = max(btc_prices_last_150)
+    min_eth = min(eth_prices_last_150)
+    max_eth = max(eth_prices_last_150)
+    min_rapporto = min(rapporto_btc_eth_last_150)
+    max_rapporto = max(rapporto_btc_eth_last_150)
+
+
+
+    fig, axs = plt.subplots(3, 1, figsize=(12, 18))
+
+    # Plot BTC prices
+    axs[0].plot(btc_prices_last_150, label='BTC', color='orange')
+
+    axs[0].set_ylabel('BTC $')
+    axs[0].grid(True)
+
+    axs[0].set_ylim(min_btc, max_btc)
+
+    # Plot ETH prices
+    axs[1].plot(eth_prices_last_150, label='ETH', color='blue')
+    axs[1].set_ylabel('ETH $')
+    axs[1].grid(True)
+    axs[1].set_ylim(min_eth, max_eth)
+
+    # Plot BTC/ETH ratio
+    axs[2].plot(rapporto_btc_eth_last_150, label='BTC/ETH', color='green')
+
+    axs[2].set_xlabel('Days')
+    axs[2].set_ylabel('BTC/ETH')
+    axs[2].grid(True)
+
+    axs[2].set_ylim(min_rapporto, max_rapporto)
+
+    plt.tight_layout()
+
+
+    file_path_fig = FOLDER_GRAPH + '/RATIO_price_plot.png'
+
+    # Verifica se il file esiste già
+    if os.path.exists(file_path_fig):
+        # Se il file esiste, eliminilo
+        os.remove(file_path_fig)
+        print("removed old plot")
+
+    # Salva la figura
+    plt.savefig(file_path_fig)
+
+
 def calcola_giorni_primo_acquisto(crypto_portfolio):
     # Trova la data più vecchia nel portafoglio
     data_acquisto_più_vecchia = min(
@@ -1029,6 +1100,10 @@ def crypto_request():
     total = reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict,plusvalenze)
     portfolio_variation = reso_totale_per_portafoglio_tempo(crypto_portfolio, crypto_data_dict, plusvalenze)
     plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict)
+
+    # Supponiamo che crypto_data_dict sia il tuo dizionario dei dati di criptovaluta
+    btc_prices, eth_prices, rapporto_btc_eth = calcola_rapporto_btc_eth(crypto_data_dict)
+    plot_rapporto_btc_eth(btc_prices, eth_prices, rapporto_btc_eth)
 
     defi_string.append(total[0])
     defi_string.append("end_simple")
