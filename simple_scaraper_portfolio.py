@@ -133,7 +133,7 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_purchase]
 
     # Aggiungi punti per i giorni di acquisto sul grafico
-    raggi = [elemento / 3 for elemento in purchase_amounts]
+    raggi = [elemento / 2 for elemento in purchase_amounts]
     day_shift = [x -1 for x in days_since_purchase]
 
     plt.scatter(convet_numbers_to_day_in_past_dates(day_shift), portfolio_values_acquisition, s=raggi, color='red')
