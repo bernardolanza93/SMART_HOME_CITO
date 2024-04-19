@@ -989,6 +989,8 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-16', 30)
     aggiungi_crypto(crypto_portfolio, 'OMNI/USDT', '2024-04-17', 5)
     aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-04-18', 36)
+    aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2024-04-18', 50)
+
 
 
 
