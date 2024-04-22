@@ -1,4 +1,5 @@
 import sys
+import time
 
 import ccxt
 from datetime import datetime, timedelta
@@ -13,6 +14,44 @@ import re
 import calendar
 
 
+def plot_moves_preformance_time_wrt_BTC(data):
+    dates = []
+    values_ada = []
+    values_btc = []
+
+    for item in data:
+        # Estrai la data
+        date_str = item.split('[')[1].split(']')[0].split(':')[1]
+        date = datetime.strptime(date_str, '%d%b%y')
+        dates.append(date)
+
+        # Estrai il valore ADA
+        ada_value = float(item.split(':')[1].split('%')[0])
+        values_ada.append(ada_value)
+
+        # Estrai il valore BTC
+        btc_value = float(item.split('%[')[1].split('%')[0])
+        combined_value = ada_value + btc_value
+        values_btc.append(combined_value)
+
+    # Plotting
+    plt.figure(figsize=(12, 6))
+    plt.scatter(dates, values_ada, c='yellow', label='ADA')
+    plt.scatter(dates, values_btc, c='blue', label='Combined Value')
+
+    # Aggiungi i label vicino ai punti
+    for i, date in enumerate(dates):
+        plt.annotate(f'{values_ada[i]}%', (date, values_ada[i]), textcoords="offset points", xytext=(0, 10),
+                     ha='center')
+        plt.annotate(f'{values_btc[i]}%', (date, values_btc[i]), textcoords="offset points", xytext=(0, 10),
+                     ha='center')
+
+    plt.xlabel('Date')
+    plt.ylabel('Percentage Value')
+    plt.title('Crypto Values Over Time')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 def convet_numbers_to_day_in_past_dates(days_in_past):
     today = datetime.now()
     custom_dates = []
@@ -129,12 +168,19 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
 
 
     plt.plot(convet_numbers_to_day_in_past_dates(days_since_first_purchase_mod), bitcoin_cumulative_percentage_mod, label=f'Bitcoin - {REDUCTION_BITCOIN_POWER}%')
+    #if len(days_since_purchase) > len(portfolio_variation):
 
-    portfolio_values_acquisition = [portfolio_variation[len(portfolio_variation) - day] for day in days_since_purchase]
+
+
+
+    portfolio_values_acquisition = []
+    for day in days_since_purchase:
+        portfolio_values_acquisition.append(portfolio_variation[len(portfolio_variation) - (day+1)])
 
     # Aggiungi punti per i giorni di acquisto sul grafico
     raggi = [elemento / 2 for elemento in purchase_amounts]
-    day_shift = [x -1 for x in days_since_purchase]
+    #day_shift = [x -1 for x in days_since_purchase]
+    day_shift = [x - 0 for x in days_since_purchase]
 
     plt.scatter(convet_numbers_to_day_in_past_dates(day_shift), portfolio_values_acquisition, s=raggi, color='red')
     # Aggiungi etichette agli assi e una legenda
@@ -991,6 +1037,9 @@ def crypto_request():
     aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-04-18', 36)
     aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2024-04-18', 50)
 
+    aggiungi_crypto(crypto_portfolio, 'OP/USDT', '2024-04-22', 48)
+    aggiungi_crypto(crypto_portfolio, 'LINK/USDT', '2024-04-22', 48)
+
 
 
 
@@ -1079,6 +1128,7 @@ def crypto_request():
 
 
 
+
     for crypto, value in dict_minimi.items():
         # Stampo la stringa e il valore associato
         values = dict_short_value[crypto]
@@ -1113,6 +1163,10 @@ def crypto_request():
     defi_string.append(total[0])
     defi_string.append("end_simple")
     defi_string.insert(0,"MOVES: " + str(exact_time))
+
+
+
+    #plot_moves_preformance_time_wrt_BTC(string_all_buyed_asset)
 
     string_all_buyed_asset = sorted(string_all_buyed_asset, key=custom_sort_key, reverse=False)
     defi_string.extend(string_all_buyed_asset)
