@@ -396,6 +396,7 @@ def on_callback_query(msg):
         try:
 
             bot.sendMessage(chat_id, 'MOVERS:')
+            invia_immagine(chat_id, FOLDER_GRAPH + "/" + "MOVERS" + PLOT_STRING_TITLE, bot)
             crypto_string = leggi_stringa_oggi()
 
             pr = 0

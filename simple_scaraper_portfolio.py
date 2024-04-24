@@ -14,44 +14,111 @@ import re
 import calendar
 
 
-def plot_moves_preformance_time_wrt_BTC(data):
-    dates = []
-    values_ada = []
-    values_btc = []
+def plot_moves_preformance_time_wrt_BTC(data,days_limit = 30):
+    x_values = []
+    y_values_crypto = []
+    y_values_BTC = []
+    crypto_symbol = []
 
     for item in data:
-        # Estrai la data
-        date_str = item.split('[')[1].split(']')[0].split(':')[1]
-        date = datetime.strptime(date_str, '%d%b%y')
-        dates.append(date)
+        # Split della stringa per trovare le diverse parti
+        parts = item.split()
 
-        # Estrai il valore ADA
-        ada_value = float(item.split(':')[1].split('%')[0])
-        values_ada.append(ada_value)
+        # Estrazione della crypto
+        crypto = parts[0].replace(":", "")
 
-        # Estrai il valore BTC
-        btc_value = float(item.split('%[')[1].split('%')[0])
-        combined_value = ada_value + btc_value
-        values_btc.append(combined_value)
+        # Estrazione del valore y per la crypto
+        y_crypto = float(parts[1].replace("%", ""))
 
-    # Plotting
-    plt.figure(figsize=(12, 6))
-    plt.scatter(dates, values_ada, c='yellow', label='ADA')
-    plt.scatter(dates, values_btc, c='blue', label='Combined Value')
+        # Estrazione della data
+        date_str = parts[2].split(":")[1].replace("[", "").replace("]", "").replace("$", "")
+        date = datetime.strptime(date_str, '%d%b%y').date()
+        # Estrazione del valore y per BTC
 
-    # Aggiungi i label vicino ai punti
-    for i, date in enumerate(dates):
-        plt.annotate(f'{values_ada[i]}%', (date, values_ada[i]), textcoords="offset points", xytext=(0, 10),
-                     ha='center')
-        plt.annotate(f'{values_btc[i]}%', (date, values_btc[i]), textcoords="offset points", xytext=(0, 10),
-                     ha='center')
+        y_BTC = float(parts[3].replace("%BTC", ""))
 
+        y_BTC_real = y_crypto - (y_BTC)
+
+        x_values.append(date)
+        y_values_crypto.append(y_crypto)
+        y_values_BTC.append(y_BTC_real)
+        crypto_symbol.append(crypto)
+
+        # Creazione del grafico
+
+        # # Calcolo dei valori massimi e minimi per impostare gli assi y
+        # max_y = max(max(y_values_crypto), max(y_values_BTC)) + 5
+        # min_y = min(min(y_values_crypto), min(y_values_BTC)) - 5
+
+        # Trova la data più recente e la più antica
+
+
+    # Creazione del grafico
+    plt.figure(figsize=(16, 6))
+
+    # Scatter plot per Crypto
+    plt.scatter(x_values, y_values_crypto, label='Crypto', color='blue')
+    for i, crypto in enumerate(crypto_symbol):
+        plt.text(x_values[i], y_values_crypto[i], crypto, fontsize=9, ha='right', va='bottom')
+
+    # Scatter plot per BTC Diff
+    plt.scatter(x_values, y_values_BTC, label='BTC Diff', color='yellow')
+    for i in range(len(x_values)):
+        if y_values_crypto[i] > y_values_BTC[i]:
+            plt.plot([x_values[i], x_values[i]], [y_values_crypto[i], y_values_BTC[i]], color='lightgreen', linestyle='--')
+        else:
+            plt.plot([x_values[i], x_values[i]], [y_values_crypto[i], y_values_BTC[i]], color='red', linestyle='--')
+
+
+
+    today = datetime.now().date()
+
+    # 60 giorni fa
+    days_ago_60 = today - timedelta(days=60)
+
+    plt.xlim(days_ago_60,today)
+
+    filtered_y_crypto = []
+    filtered_y_BTC = []
+
+    for date, y_crypto_value, y_BTC_value in zip(x_values, y_values_crypto, y_values_BTC):
+        if date > days_ago_60:
+            filtered_y_crypto.append(y_crypto_value)
+            filtered_y_BTC.append(y_BTC_value)
+
+    max_y = max(max(filtered_y_crypto),max(filtered_y_BTC))
+    min_y = min(min(filtered_y_crypto),min(filtered_y_BTC))
+    plt.ylim(min_y-5, max_y+5)
+
+    # Aggiunta delle etichette e della legenda
     plt.xlabel('Date')
-    plt.ylabel('Percentage Value')
-    plt.title('Crypto Values Over Time')
+    plt.ylabel('Performance (%)')
+    plt.title('Performance Time w.r.t BTC')
     plt.legend()
     plt.grid(True)
-    plt.show()
+
+    # Trova la data più recente e la più antica
+
+    # Rotazione delle date sull'asse x per migliorare la leggibilità
+    plt.xticks(rotation=45)
+
+    # Visualizzazione del grafico
+    plt.tight_layout()
+
+
+    # Percorso del file di salvataggio
+    file_path_fig = FOLDER_GRAPH + '/MOVERS_price_plot.png'
+
+    # Verifica se il file esiste già
+    if os.path.exists(file_path_fig):
+        # Se il file esiste, eliminilo
+        os.remove(file_path_fig)
+        print("removed old plot")
+
+    # Salva la figura
+    plt.savefig(file_path_fig)
+
+
 def convet_numbers_to_day_in_past_dates(days_in_past):
     today = datetime.now()
     custom_dates = []
@@ -497,9 +564,9 @@ def converti_formato_data(testo):
             anno, mese, giorno = match
 
             # Convertiamo il mese nel formato abbreviato
-            mesi_abbreviati = {'01': 'gen', '02': 'feb', '03': 'mar', '04': 'apr', '05': 'mag',
-                               '06': 'giu', '07': 'lug', '08': 'ago', '09': 'set', '10': 'ott',
-                               '11': 'nov', '12': 'dic'}
+            mesi_abbreviati = {'01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May',
+                               '06': 'Jun', '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct',
+                               '11': 'Nov', '12': 'Dec'}
             mese_abbreviato = mesi_abbreviati[mese]
 
             # Costruiamo la nuova data nel formato DDmonYY
@@ -1166,7 +1233,7 @@ def crypto_request():
 
 
 
-    #plot_moves_preformance_time_wrt_BTC(string_all_buyed_asset)
+    plot_moves_preformance_time_wrt_BTC(string_all_buyed_asset)
 
     string_all_buyed_asset = sorted(string_all_buyed_asset, key=custom_sort_key, reverse=False)
     defi_string.extend(string_all_buyed_asset)
