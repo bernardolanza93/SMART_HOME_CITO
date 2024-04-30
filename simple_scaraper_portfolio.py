@@ -12,9 +12,11 @@ import subprocess
 import pandas as pd
 import re
 import calendar
+import registro_crypto as PORTFOLIO
+import random
 
 
-def plot_moves_preformance_time_wrt_BTC(data,days_limit = 30):
+def plot_moves_preformance_time_wrt_BTC(data,days_limit = 60):
     x_values = []
     y_values_crypto = []
     y_values_BTC = []
@@ -53,47 +55,58 @@ def plot_moves_preformance_time_wrt_BTC(data,days_limit = 30):
         # Trova la data più recente e la più antica
 
 
-    # Creazione del grafico
-    plt.figure(figsize=(16, 6))
 
-    # Scatter plot per Crypto
-    plt.scatter(x_values, y_values_crypto, label='Crypto', color='blue')
-    for i, crypto in enumerate(crypto_symbol):
-        plt.text(x_values[i], y_values_crypto[i], crypto, fontsize=9, ha='right', va='bottom')
-
-    # Scatter plot per BTC Diff
-    plt.scatter(x_values, y_values_BTC, label='BTC Diff', color='yellow')
-    for i in range(len(x_values)):
-        if y_values_crypto[i] > y_values_BTC[i]:
-            plt.plot([x_values[i], x_values[i]], [y_values_crypto[i], y_values_BTC[i]], color='lightgreen', linestyle='--')
-        else:
-            plt.plot([x_values[i], x_values[i]], [y_values_crypto[i], y_values_BTC[i]], color='red', linestyle='--')
 
 
 
     today = datetime.now().date()
 
     # 60 giorni fa
-    days_ago_60 = today - timedelta(days=60)
+    days_ago_60 = today - timedelta(days=days_limit)
 
-    plt.xlim(days_ago_60,today)
+
 
     filtered_y_crypto = []
     filtered_y_BTC = []
+    filtered_date =[]
+    crypto_symbol_filtered = []
 
-    for date, y_crypto_value, y_BTC_value in zip(x_values, y_values_crypto, y_values_BTC):
+    # Creazione del grafico
+
+
+
+    for date, y_crypto_value, y_BTC_value, crypto_label in zip(x_values, y_values_crypto, y_values_BTC,crypto_symbol):
         if date > days_ago_60:
             filtered_y_crypto.append(y_crypto_value)
             filtered_y_BTC.append(y_BTC_value)
+            filtered_date.append(date)
+            crypto_symbol_filtered.append(crypto_label)
+
+
+    plt.figure(figsize=(16, 6), dpi=300)
+
+        # Scatter plot per Crypto
+    plt.scatter(filtered_date, filtered_y_crypto, label='Crypto', color='blue', marker="_",s = 500)
+    # Scatter plot per BTC Diff
+    plt.scatter(filtered_date, filtered_y_BTC, label='BTC', color='olive',marker="_",s = 500)
+    for i in range(len(filtered_date)):
+        if filtered_y_crypto[i] > filtered_y_BTC[i]:
+            plt.plot([filtered_date[i], filtered_date[i]], [filtered_y_crypto[i], filtered_y_BTC[i]], color='lightgreen', linestyle='--', linewidth = 4, alpha=0.5)
+            plt.text(filtered_date[i], filtered_y_crypto[i], crypto_symbol_filtered[i], fontsize=8, ha='left', va='bottom')
+        else:
+            plt.plot([filtered_date[i], filtered_date[i]], [filtered_y_crypto[i], filtered_y_BTC[i]], color='red', linestyle='--', linewidth = 4, alpha=0.5)
+            plt.text(filtered_date[i], filtered_y_crypto[i], crypto_symbol_filtered[i], fontsize=8, ha='left', va='top')
+
 
     max_y = max(max(filtered_y_crypto),max(filtered_y_BTC))
     min_y = min(min(filtered_y_crypto),min(filtered_y_BTC))
     plt.ylim(min_y-5, max_y+5)
+    plt.xlim(days_ago_60, today)
 
     # Aggiunta delle etichette e della legenda
-    plt.xlabel('Date')
-    plt.ylabel('Performance (%)')
-    plt.title('Performance Time w.r.t BTC')
+    plt.xlabel('Date',fontsize=12)
+    plt.ylabel('Performance (%)',fontsize=12)
+    plt.title('Performance Time w.r.t BTC',fontsize=12)
     plt.legend()
     plt.grid(True)
 
@@ -813,9 +826,7 @@ def giorni_passati_da_minimo_locale_con_sconto(symbol, crypto_data_dict, sconto_
 def aggiungi_plusvalenza(plusvalenze, valore):
     plusvalenze.append(valore)
     return plusvalenze
-def aggiungi_crypto(portfolio, nome_crypto, data_acquisto, importo):
-    key = (data_acquisto, nome_crypto)
-    portfolio[key] = importo
+
 def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
     total_invested = 0
     total_returns = 0
@@ -978,142 +989,7 @@ def calcola_giorni_primo_acquisto(crypto_portfolio):
 def crypto_request():
 
 
-
-
-
-
-    crypto_portfolio = {}
-
-    # Esempio di utilizzo
-    aggiungi_crypto(crypto_portfolio, 'BNB/USDT', '2024-02-27', 55)
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2022-05-30', 100)
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-01-27', 50)
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2023-12-11', 18)
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2024-03-05', 100)
-    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2024-04-03', 20)
-
-    aggiungi_crypto(crypto_portfolio, 'W/USDT', '2024-04-04', 30)
-
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-06-09', 50)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2022-11-10', 10)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2023-12-15', 20)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-11', 160)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-01-24', 20)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-02-28', 204)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-02', 25)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-05', 100)
-    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-03-21', 287)
-
-    aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-03-16', 5)
-    aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-03-19', 8)
-
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-10', 40)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-01-24', 20)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2023-12-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 30)
-    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2023-12-16', 10)
-    aggiungi_crypto(crypto_portfolio, 'BTTC/USDT', '2024-01-31', 15)
-    aggiungi_crypto(crypto_portfolio, 'FLUX/USDT', '2024-01-10', 22)
-    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2023-12-20', 25)
-    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-01-31', 10)
-    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2023-12-20', 20)
-    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-02-07', 20)
-    aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2023-12-15', 20)
-    aggiungi_crypto(crypto_portfolio, 'SUPER/USDT', '2024-02-24', 11)
-    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2023-12-20', 11)
-    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2024-03-12', 25)
-    aggiungi_crypto(crypto_portfolio, 'DOT/USDT', '2024-03-12', 70)
-    aggiungi_crypto(crypto_portfolio, 'UNI/USDT', '2024-03-12', 50)
-    aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-05-30', 8)
-    aggiungi_crypto(crypto_portfolio, 'DOGE/USDT', '2022-11-01', 20)
-    aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2023-04-19', 8)
-    aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2024-03-05', 50)
-    aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2023-12-16', 12)
-    aggiungi_crypto(crypto_portfolio, 'JTO/USDT', '2023-12-16', 11)
-    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-01-10', 2)
-    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-03-04', 25)
-    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-03-05', 24)
-
-
-    aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-02-20', 8)
-    aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-03-14', 46)
-    aggiungi_crypto(crypto_portfolio, 'CTXC/USDT', '2024-03-19', 15)
-    aggiungi_crypto(crypto_portfolio, 'AGIX/USDT', '2024-02-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'OCEAN/USDT', '2024-02-27', 18)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-02-29', 53)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 25)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-04', 100)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-08', 51)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-03-21', 23)
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-04-03', 46)
-
-    aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-02-23', 10)
-    aggiungi_crypto(crypto_portfolio, 'SOL/USDT', '2024-03-12', 25)
-    aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'PROM/USDT', '2024-02-28', 23)
-    aggiungi_crypto(crypto_portfolio, 'NMR/USDT', '2024-02-21', 10)
-    aggiungi_crypto(crypto_portfolio, 'NMR/USDT', '2024-02-27', 28)
-    aggiungi_crypto(crypto_portfolio, 'HBAR/USDT', '2024-02-20', 10)
-    aggiungi_crypto(crypto_portfolio, 'HBAR/USDT', '2024-02-23', 10)
-    aggiungi_crypto(crypto_portfolio, 'FET/USDT', '2024-02-20', 18)
-    aggiungi_crypto(crypto_portfolio, 'GALA/USDT', '2024-02-23', 20)
-
-    aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-23', 35)
-    aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-24', 50)
-    aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-04', 31)
-    aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-08', 45)
-    aggiungi_crypto(crypto_portfolio, 'XRP/USDT', '2024-02-23', 20)
-    aggiungi_crypto(crypto_portfolio, 'AI/USDT', '2024-02-23', 25)
-    aggiungi_crypto(crypto_portfolio, 'RNDR/USDT', '2024-02-23', 30)
-    aggiungi_crypto(crypto_portfolio, 'LUNC/USDT', '2024-02-23', 5)
-    aggiungi_crypto(crypto_portfolio, 'AVAX/USDT', '2024-02-23', 15)
-    aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-23', 10)
-    aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-02-24', 20)
-    aggiungi_crypto(crypto_portfolio, 'NTRN/USDT', '2024-03-05', 24)
-
-
-    aggiungi_crypto(crypto_portfolio, 'ARB/USDT', '2024-02-23', 20)
-    aggiungi_crypto(crypto_portfolio, 'ARB/USDT', '2024-03-18', 50)
-    aggiungi_crypto(crypto_portfolio, 'ICP/USDT', '2024-02-26', 25)
-    aggiungi_crypto(crypto_portfolio, 'PIXEL/USDT', '2024-02-26', 30)
-    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-03-03', 15)
-    aggiungi_crypto(crypto_portfolio, 'ROSE/USDT', '2024-03-04', 75)
-    aggiungi_crypto(crypto_portfolio, 'GRT/USDT', '2024-03-06', 48)
-
-    aggiungi_crypto(crypto_portfolio, 'ALCX/USDT', '2024-04-08', 2)
-    aggiungi_crypto(crypto_portfolio, 'FARM/USDT', '2024-04-08', 1)
-    aggiungi_crypto(crypto_portfolio, 'TNSR/USDT', '2024-04-08', 1)
-    aggiungi_crypto(crypto_portfolio, 'STRAX/USDT', '2024-04-08', 1)
-    aggiungi_crypto(crypto_portfolio, 'CREAM/USDT', '2024-04-08', 1)
-
-    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-04-13', 20)
-    aggiungi_crypto(crypto_portfolio, 'TAO/USDT', '2024-04-12', 15)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-13', 20)
-    aggiungi_crypto(crypto_portfolio, 'BOME/USDT', '2024-04-13', 10)
-    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-04-13', 10)
-    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-04-13', 10)
-
-    aggiungi_crypto(crypto_portfolio, 'ADA/USDT', '2024-04-16', 40)
-    aggiungi_crypto(crypto_portfolio, 'JUV/USDT', '2024-04-16', 2)
-    aggiungi_crypto(crypto_portfolio, 'PYR/USDT', '2024-04-16', 25)
-    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-04-16', 30)
-    aggiungi_crypto(crypto_portfolio, 'OMNI/USDT', '2024-04-17', 5)
-    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-04-18', 36)
-    aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2024-04-18', 50)
-
-    aggiungi_crypto(crypto_portfolio, 'OP/USDT', '2024-04-22', 48)
-    aggiungi_crypto(crypto_portfolio, 'LINK/USDT', '2024-04-22', 48)
-
-
-
-
-
-
-
-
+    crypto_portfolio = PORTFOLIO.crea_portafoglio()
 
 
 
