@@ -16,6 +16,9 @@ import registro_crypto as PORTFOLIO
 import random
 
 
+DAY_FOR_PORTFOLIO_PLOT_AND_BTC = 150
+
+
 def plot_moves_preformance_time_wrt_BTC(data,days_limit = 60):
     x_values = []
     y_values_crypto = []
@@ -169,7 +172,7 @@ def calculate_cumulative_percentage_change(prices):
 
 
 def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
-    PLOT_DAYS = 90
+    PLOT_DAYS = DAY_FOR_PORTFOLIO_PLOT_AND_BTC
     REDUCTION_BITCOIN_POWER = 50
     # Trova la data del primo acquisto nel portafoglio
     first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
