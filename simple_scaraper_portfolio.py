@@ -171,8 +171,8 @@ def calculate_cumulative_percentage_change(prices):
     return cumulative_percentage
 
 
-def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict):
-    PLOT_DAYS = DAY_FOR_PORTFOLIO_PLOT_AND_BTC
+def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict, DAYS_IN_PAST, name):
+    PLOT_DAYS = DAYS_IN_PAST
     REDUCTION_BITCOIN_POWER = 50
     # Trova la data del primo acquisto nel portafoglio
     first_purchase_date = min([datetime.strptime(date, "%Y-%m-%d") for date, _ in crypto_portfolio.keys()])
@@ -279,7 +279,7 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
 
 
     # Percorso del file di salvataggio
-    file_path_fig = FOLDER_GRAPH + '/ALL_price_plot.png'
+    file_path_fig = FOLDER_GRAPH + '/'+ name +'_ALL_price_plot.png'
 
     # Verifica se il file esiste già
     if os.path.exists(file_path_fig):
@@ -1100,7 +1100,8 @@ def crypto_request():
 
     total = reso_totale_per_portafoglio(crypto_portfolio,crypto_data_dict,plusvalenze)
     portfolio_variation = reso_totale_per_portafoglio_tempo(crypto_portfolio, crypto_data_dict, plusvalenze)
-    plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict)
+    plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict, 60 , "RECENT")
+    plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_dict, 365, "OLD")
 
     # Supponiamo che crypto_data_dict sia il tuo dizionario dei dati di criptovaluta
     btc_prices, eth_prices, rapporto_btc_eth = calcola_rapporto_btc_eth(crypto_data_dict)

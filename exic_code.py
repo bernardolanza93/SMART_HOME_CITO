@@ -364,7 +364,8 @@ def on_callback_query(msg):
 
         try:
 
-            invia_immagine(chat_id, FOLDER_GRAPH + "/" + "ALL" + PLOT_STRING_TITLE, bot)
+            invia_immagine(chat_id, FOLDER_GRAPH + "/" + "OLD_ALL" + PLOT_STRING_TITLE, bot)
+            invia_immagine(chat_id, FOLDER_GRAPH + "/" + "RECENT_ALL" + PLOT_STRING_TITLE, bot)
             invia_immagine(chat_id, FOLDER_GRAPH + "/" + "RATIO" + PLOT_STRING_TITLE, bot)
             crypto_string = leggi_stringa_oggi()
 
