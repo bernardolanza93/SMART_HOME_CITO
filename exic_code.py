@@ -156,19 +156,20 @@ def write_data_csv(bot):
             current_symbols = get_binance_symbols()
 
             # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
-            if len(current_symbols) != len(initial_symbols):
-                new_symbols = set(current_symbols) - set(initial_symbols)
-                if new_symbols is not None:
-                    if new_symbols:
-                        bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
-                        for symbol in new_symbols:
-                            bot.sendMessage(bernardo_chat_id, symbol)
+            if current_symbols is not None and initial_symbols is not None:
+                if len(current_symbols) != len(initial_symbols):
+                    new_symbols = set(current_symbols) - set(initial_symbols)
+                    if new_symbols is not None:
+                        if new_symbols:
+                            bot.sendMessage(bernardo_chat_id, "NEW CRYPTO:")
+                            for symbol in new_symbols:
+                                bot.sendMessage(bernardo_chat_id, symbol)
 
-                        initial_symbols = current_symbols
+                            initial_symbols = current_symbols
 
-                        # Aumenta il contatore ad ogni iterazione del ciclo
+                            # Aumenta il contatore ad ogni iterazione del ciclo
         except Exception as e:
-            bot.sendMessage(bernardo_chat_id, "ERROR NEW SYMBOL :" + str(e))
+            bot.sendMessage(bernardo_chat_id, "ERROR NEW SYMBOL :" + str(e) +"ini symb:" +str(initial_symbols))
 
         try:
 
