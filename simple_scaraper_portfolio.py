@@ -19,7 +19,7 @@ import random
 DAY_FOR_PORTFOLIO_PLOT_AND_BTC = 150
 
 
-def plot_moves_preformance_time_wrt_BTC(data,days_limit = 60):
+def plot_moves_preformance_time_wrt_BTC(data,days_limit = 120):
     x_values = []
     y_values_crypto = []
     y_values_BTC = []
@@ -62,10 +62,7 @@ def plot_moves_preformance_time_wrt_BTC(data,days_limit = 60):
 
 
 
-    today = datetime.now().date()
 
-    # 60 giorni fa
-    days_ago_60 = today - timedelta(days=days_limit)
 
 
 
@@ -75,6 +72,17 @@ def plot_moves_preformance_time_wrt_BTC(data,days_limit = 60):
     crypto_symbol_filtered = []
 
     # Creazione del grafico
+    latest_date = None
+    for date, y_crypto_value, y_BTC_value, crypto_label in zip(x_values, y_values_crypto, y_values_BTC,crypto_symbol):
+        if latest_date is None or date > latest_date:
+            latest_date = date
+    print("LETEST DAY PURCHESE:::: ",latest_date)
+
+
+    today = latest_date
+
+    # 60 giorni fa
+    days_ago_60 = today - timedelta(days=days_limit)
 
 
 

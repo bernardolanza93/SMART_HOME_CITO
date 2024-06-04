@@ -89,7 +89,7 @@ def crea_portafoglio():
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-02-24', 50)
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-04', 31)
     aggiungi_crypto(crypto_portfolio, 'JASMY/USDT', '2024-03-08', 45)
-    aggiungi_crypto(crypto_portfolio, 'XRP/USDT', '2024-02-23', 20)
+
     aggiungi_crypto(crypto_portfolio, 'AI/USDT', '2024-02-23', 25)
     aggiungi_crypto(crypto_portfolio, 'RNDR/USDT', '2024-02-23', 30)
     aggiungi_crypto(crypto_portfolio, 'LUNC/USDT', '2024-02-23', 5)
@@ -142,10 +142,19 @@ def crea_portafoglio():
     aggiungi_crypto(crypto_portfolio, 'OP/USDT', '2024-04-29', 20)
 
     aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2024-05-06', 197)
+    aggiungi_crypto(crypto_portfolio, 'LINK/USDT', '2024-05-20', 20)
 
 
 
 
+#gestire swap :  da cosa a cosa :  swap(10 eth  / BTC  , giorno)
+    #calcolo valore come modifica percentuale di investimento
+    #implementazione nuova allora si guardano solo le coins totali e il totale speso:
+    #calcolo delle coins totali per ogni cripto
+    #calcolo crescita di ogni singolo acquisto
+    #calcolo crescita di ogni scambio comparato al rimanere in quella (vale anche per le liquyidazioni) obv da giorno acquisto
+    #aggiornamento coins totali (prendi giorno di scambio togli il numero di coins vecchie e aggiungiu le nuove dai rispettivi sub totali)
+    #gran total: soldi investiti /  valore tutti i coins aggiornati ad oggi
 
 
 
