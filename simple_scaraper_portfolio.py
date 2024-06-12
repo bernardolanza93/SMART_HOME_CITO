@@ -279,7 +279,11 @@ def plot_portfolio_variation(portfolio_variation, crypto_portfolio, crypto_data_
     plt.ylabel('Valore del Portafoglio')
     plt.legend()
     plt.xlim(converted_last_dates_twelfth[0], converted_last_dates_twelfth[-1])
-    plt.ylim(min_graph, max_graph)
+
+    if name == "RECENT":
+        plt.ylim(min_portfolio_value, max_portfolio_value)
+    else:
+        plt.ylim(min_graph, max_graph)
     plt.xticks(rotation=45)  # Rotazione delle date per una migliore leggibilità
     plt.gca().xaxis.set_major_locator(plt.MaxNLocator(nbins=15))  # Imposta il numero massimo di ticks sull'asse x
     plt.tight_layout()  # Ottimizza il layout del grafico
@@ -1135,7 +1139,7 @@ def crypto_request():
 
     return defi_string
 
-DEBUG = 0
+DEBUG = 1
 
 if DEBUG:
 
