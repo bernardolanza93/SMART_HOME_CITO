@@ -151,6 +151,13 @@ def crea_portafoglio():
     aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2024-06-18', 25)
     aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-06-18', 20)
 
+    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-07-03', 30)
+    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-07-03', 35)
+    aggiungi_crypto(crypto_portfolio, 'SHIB/USDT', '2024-07-03', 35)
+
+
+
+
 
 
 
