@@ -160,6 +160,22 @@ def crea_portafoglio():
     aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2024-07-04', 20)
     aggiungi_crypto(crypto_portfolio, 'FET/USDT', '2024-07-04', 20)
 
+    aggiungi_crypto(crypto_portfolio, 'FET/USDT', '2024-08-02', 16)
+    aggiungi_crypto(crypto_portfolio, 'MATIC/USDT', '2024-08-02', 16)
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-08-02', 18)
+    aggiungi_crypto(crypto_portfolio, 'PEPE/USDT', '2024-08-02', 10)
+
+    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-08-04', 10)
+    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-08-04', 15)
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-08-04', 10)
+
+    aggiungi_crypto(crypto_portfolio, 'ETH/USDT', '2024-08-05', 15)
+    aggiungi_crypto(crypto_portfolio, 'AR/USDT', '2024-08-05', 15)
+    aggiungi_crypto(crypto_portfolio, 'BTC/USDT', '2024-08-05', 15)
+    aggiungi_crypto(crypto_portfolio, 'ALGO/USDT', '2024-08-05', 15)
+    aggiungi_crypto(crypto_portfolio, 'XAI/USDT', '2024-08-05', 5)
+    aggiungi_crypto(crypto_portfolio, 'WLD/USDT', '2024-08-05', 5)
+
 
 
 
