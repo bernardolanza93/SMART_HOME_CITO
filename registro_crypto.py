@@ -185,6 +185,8 @@ def crea_portafoglio():
 
 
 
+
+
 #gestire swap :  da cosa a cosa :  swap(10 eth  / BTC  , giorno)
     #calcolo valore come modifica percentuale di investimento
     #implementazione nuova allora si guardano solo le coins totali e il totale speso:
