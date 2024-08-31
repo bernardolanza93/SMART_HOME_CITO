@@ -1,3 +1,7 @@
+
+
+
+
 def aggiungi_crypto(portfolio, nome_crypto, data_acquisto, importo):
     key = (data_acquisto, nome_crypto)
     portfolio[key] = importo

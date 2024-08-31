@@ -14,6 +14,7 @@ import socket
 import psutil
 from simple_scaraper_portfolio import *
 from CONSTANT import *
+from confidential_data import *
 
 import multiprocessing
 import os
@@ -103,10 +104,7 @@ def controllo_autorizzazione_utente(chat_id):
 
 def crea_file_utenti_autorizzati():
     if not os.path.exists("utenti_autorizzati.json"):
-        utenti_autorizzati = {
-            "283149655": "bernardo",
-            "505937736": "alessandro"
-        }
+
         with open("utenti_autorizzati.json", "w") as file:
             json.dump(utenti_autorizzati, file)
         print("File utenti_autorizzati.json creato.")
@@ -229,7 +227,7 @@ def on_chat_message(msg):
         if not autorizzazione:
             bot.sendMessage(bernardo_chat_id,   str(who) + " says: " + str(what) + "[SU-COM]")
 
-            if str(what)  == 'Juve':
+            if str(what)  == password:
                 bot.sendMessage(chat_id, "you said well" + str(who) + " .FORZA JUVE SEMPRE // AUTHORIZED")
                 rispondi = 1
             else:
@@ -481,7 +479,7 @@ else:
     print("Impossibile leggere il codice del bot.")
 
 
-bot = telepot.Bot('7003661229:AAEqJdSXnEUXYWaXuzdntB1KwfRq4OFP6IQ')
+bot = telepot.Bot(bot_code)
 
 
 
