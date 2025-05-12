@@ -388,7 +388,16 @@ def on_callback_query(msg):
                 if info_c == "end_simple":
                     break
                 else:
-                    bot.sendMessage(chat_id,info_c)
+
+                    if info_c and isinstance(info_c, str) and len(info_c) < 4000:
+                        bot.sendMessage(chat_id, info_c)
+                        time.sleep(0.3)  # o più, se serve
+                    else:
+                        bot.sendMessage(chat_id, "Messaggio saltato o errato:")
+
+
+
+
         except Exception as e:
             bot.sendMessage(chat_id, "ERROR CRYPTO PORTFOLIO:" + str(e))
 
