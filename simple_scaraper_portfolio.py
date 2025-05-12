@@ -12,8 +12,18 @@ import subprocess
 import pandas as pd
 import re
 import calendar
-import registro_crypto as PORTFOLIO
+
 import random
+
+
+# Aggiungi il percorso della repository esterna a sys.path
+repo_esterna_path = os.path.expanduser("~/PRIVATE_SMART_HOME")
+sys.path.insert(0, repo_esterna_path)
+
+# Ora puoi importare tutto dallo script desiderato
+from confidential_data import *
+import registro_crypto as PORTFOLIO
+
 
 
 DAY_FOR_PORTFOLIO_PLOT_AND_BTC = 150
@@ -1139,7 +1149,7 @@ def crypto_request():
 
     return defi_string
 
-DEBUG = 1
+DEBUG = 0
 
 if DEBUG:
 

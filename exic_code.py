@@ -14,7 +14,18 @@ import socket
 import psutil
 from simple_scaraper_portfolio import *
 from CONSTANT import *
+
+import sys
+import os
+
+# Aggiungi il percorso della repository esterna a sys.path
+repo_esterna_path = os.path.expanduser("~/PRIVATE_SMART_HOME")
+sys.path.insert(0, repo_esterna_path)
+
+# Ora puoi importare tutto dallo script desiderato
 from confidential_data import *
+from registro_crypto.py import *
+
 
 import multiprocessing
 import os
@@ -38,7 +49,9 @@ keyboard_1 = InlineKeyboardMarkup(inline_keyboard=[
 def leggi_codice_bot_da_file(nome_file):
     try:
         with open(nome_file, 'r') as file:
+
             codice_bot = file.read()
+            print("codice bot estratto da file:", codice_bot)
         return codice_bot
     except FileNotFoundError:
         print(f"Il file '{nome_file}' non è stato trovato.")
@@ -465,16 +478,12 @@ humidity = 0.0
 temperature = 0.0
 
 
-# Specifica il percorso del file contenente il codice del bot
-bot_file = 'bot.txt'
 
-# Leggi il codice del bot dal file
-codice_bot = leggi_codice_bot_da_file(bot_file)
 
 # Ora puoi utilizzare il codice del bot come desideri
-if codice_bot:
+if bot_code:
     print("Codice del bot letto correttamente:")
-    print(codice_bot)
+    print(bot_code)
 else:
     print("Impossibile leggere il codice del bot.")
 
