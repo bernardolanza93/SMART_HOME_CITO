@@ -24,7 +24,7 @@ sys.path.insert(0, repo_esterna_path)
 
 # Ora puoi importare tutto dallo script desiderato
 from confidential_data import *
-from registro_crypto.py import *
+from registro_crypto import *
 
 
 import multiprocessing
