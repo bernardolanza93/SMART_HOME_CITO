@@ -405,35 +405,11 @@ def load_symbols_from_file(filename):
 
 def check_for_new_symbols(filename):
 
-    initial_symbols = load_symbols_from_file(filename)
 
-    if not initial_symbols:
-        initial_symbols = get_binance_symbols()
-        save_symbols_to_file(initial_symbols, filename)
-
-    if initial_symbols is not None:
+    print("Nuove criptovalute quotate su Binance: CERCATELE DA SOLO")
 
 
-        current_symbols = get_binance_symbols()
-
-        # Trova le nuove criptovalute aggiunte rispetto all'elenco iniziale
-        new_symbols = set(current_symbols) - set(initial_symbols)
-        symbol_string = []
-
-        if new_symbols:
-            print("Nuove criptovalute quotate su Binance:")
-            i = 0
-            for symbol in new_symbols:
-                i = i+1
-                symbol_string.append(str(i)+":"+ symbol)
-
-            # Puoi inviare notifiche o eseguire altre azioni di avviso qui
-        else:
-            print("Nessuna nuova criptovaluta trovata.")
-    else:
-        symbol_string = "no data"
-
-    return symbol_string
+    return None
 
 
 def image_inspector(filepath):
