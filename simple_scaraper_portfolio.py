@@ -853,12 +853,15 @@ def valutatore_singoli_investimenti_DEPRECATED(crypto_portfolio, crypto_data_dic
     # Ritorna il rendimento totale e la lista degli investimenti
     return reso_totale_percentuale, string_acquisti
 
-
 def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
     total_invested = 0
     total_returns = 0
+    rendimento_BTC_somma = 0
+    conteggio = 0
 
-    # Calcola il rendimento cumulativo della crypto
+    string_acquisti = []
+
+    # Calcola il rendimento cumulativo
     for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
         if nome_crypto == symbol:
             total_invested += importo
@@ -866,15 +869,30 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
 
+            # Rendimento BTC per fare media
+            rendim_btc = get_crypto_percentage_change('BTC/USDT', data_acquisto, crypto_data_dict)
+            if rendim_btc is not None:
+                rendimento_BTC_somma += rendim_btc
+                conteggio += 1
+
+    # Evita divisione per zero
     if total_invested == 0:
         reso_totale_percentuale = 0
     else:
         reso_totale_percentuale = (total_returns / total_invested) * 100
 
-    report = f"{rimuovi_USDT(symbol)}:  {reso_totale_percentuale:.1f}% ({total_returns:.1f}/{total_invested:.1f}$)"
-    
-    # Nota: ritorna la stessa struttura: percentuale + lista (che ora contiene solo una riga)
-    return reso_totale_percentuale, [report]
+    # Calcola media differenza BTC
+    if conteggio > 0:
+        differenza_BTC = reso_totale_percentuale - (rendimento_BTC_somma / conteggio)
+    else:
+        differenza_BTC = 0
+
+    # Stringa compatibile con il vecchio formato
+    string_acquisti.append(
+        f"{rimuovi_USDT(symbol)}: {reso_totale_percentuale:.0f}% [{total_invested}$:TOT] {differenza_BTC:.0f}%BTC"
+    )
+
+    return reso_totale_percentuale, string_acquisti
 
 
 
