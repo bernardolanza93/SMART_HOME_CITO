@@ -18,6 +18,8 @@ from CONSTANT import *
 import sys
 import os
 
+#now on windows
+
 # Aggiungi il percorso della repository esterna a sys.path
 repo_esterna_path = os.path.expanduser("~/PRIVATE_SMART_HOME")
 sys.path.insert(0, repo_esterna_path)
