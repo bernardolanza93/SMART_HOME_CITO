@@ -852,7 +852,7 @@ def aggiungi_plusvalenza(plusvalenze, valore):
     plusvalenze.append(valore)
     return plusvalenze
 
-def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
+def valutatore_singoli_investimenti_DEPRECATED(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
     total_invested = 0
     total_returns = 0
 
@@ -876,6 +876,32 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
 
     # Ritorna il rendimento totale e la lista degli investimenti
     return reso_totale_percentuale, string_acquisti
+
+
+def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, esprimi_percentuale=True):
+    total_invested = 0
+    total_returns = 0
+
+    # Calcola il rendimento cumulativo della crypto
+    for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
+        if nome_crypto == symbol:
+            total_invested += importo
+            rendimento = get_crypto_percentage_change(nome_crypto, data_acquisto, crypto_data_dict)
+            reso_acquisto = importo * rendimento / 100
+            total_returns += reso_acquisto
+
+    if total_invested == 0:
+        reso_totale_percentuale = 0
+    else:
+        reso_totale_percentuale = (total_returns / total_invested) * 100
+
+    report = f"{rimuovi_USDT(symbol)} totale: {reso_totale_percentuale:.1f}% ({total_returns:.1f}/{total_invested:.1f}$)"
+    
+    # Nota: ritorna la stessa struttura: percentuale + lista (che ora contiene solo una riga)
+    return reso_totale_percentuale, [report]
+
+
+
 def get_crypto_percentage_change(symbol, start_date, crypto_data_dict, end_date=None):
     if symbol in crypto_data_dict:
         # Estrai il DataFrame dei dati della criptovaluta
