@@ -858,10 +858,11 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
     total_returns = 0
     rendimento_BTC_somma = 0
     conteggio = 0
+    date_acquisti = []
 
     string_acquisti = []
 
-    # Calcola il rendimento cumulativo
+    # Calcola il rendimento cumulativo su tutti gli acquisti di questa crypto
     for (data_acquisto, nome_crypto), importo in crypto_portfolio.items():
         if nome_crypto == symbol:
             total_invested += importo
@@ -869,11 +870,12 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
             reso_acquisto = importo * rendimento / 100
             total_returns += reso_acquisto
 
-            # Rendimento BTC per fare media
             rendim_btc = get_crypto_percentage_change('BTC/USDT', data_acquisto, crypto_data_dict)
             if rendim_btc is not None:
                 rendimento_BTC_somma += rendim_btc
                 conteggio += 1
+
+            date_acquisti.append(data_acquisto)
 
     # Evita divisione per zero
     if total_invested == 0:
@@ -881,18 +883,24 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
     else:
         reso_totale_percentuale = (total_returns / total_invested) * 100
 
-    # Calcola media differenza BTC
     if conteggio > 0:
         differenza_BTC = reso_totale_percentuale - (rendimento_BTC_somma / conteggio)
     else:
         differenza_BTC = 0
 
-    # Stringa compatibile con il vecchio formato
+    # Prendi la data del primo acquisto
+    if date_acquisti:
+        data_rappresentativa = converti_formato_data(min(date_acquisti))
+    else:
+        data_rappresentativa = "01Jan70"  # fallback di sicurezza
+
+    # Costruisci la stringa IDENTICA al formato originale
     string_acquisti.append(
-        f"{rimuovi_USDT(symbol)}: {reso_totale_percentuale:.0f}% [{total_invested}$:TOT] {differenza_BTC:.0f}%BTC"
+        f"{rimuovi_USDT(symbol)}: {reso_totale_percentuale:.0f}% [{total_invested}$:{data_rappresentativa}] {differenza_BTC:.0f}%BTC"
     )
 
     return reso_totale_percentuale, string_acquisti
+
 
 
 
