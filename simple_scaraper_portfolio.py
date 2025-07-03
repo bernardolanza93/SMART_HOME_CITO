@@ -895,7 +895,7 @@ def valutatore_singoli_investimenti(crypto_portfolio, crypto_data_dict, symbol, 
     else:
         reso_totale_percentuale = (total_returns / total_invested) * 100
 
-    report = f"{rimuovi_USDT(symbol)} totale: {reso_totale_percentuale:.1f}% ({total_returns:.1f}/{total_invested:.1f}$)"
+    report = f"{rimuovi_USDT(symbol)}:  {reso_totale_percentuale:.1f}% ({total_returns:.1f}/{total_invested:.1f}$)"
     
     # Nota: ritorna la stessa struttura: percentuale + lista (che ora contiene solo una riga)
     return reso_totale_percentuale, [report]
