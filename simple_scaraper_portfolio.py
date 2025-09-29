@@ -1177,7 +1177,7 @@ def crypto_request():
 
     return defi_string
 
-DEBUG = 0
+DEBUG = 1
 
 if DEBUG:
 
