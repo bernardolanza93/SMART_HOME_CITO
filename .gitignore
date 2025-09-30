@@ -1,0 +1,5 @@
+# Escludi tutto il contenuto della cartella "plot"
+plot/
+
+# Escludi un file JSON specifico
+dati.json
